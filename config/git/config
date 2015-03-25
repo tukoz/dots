@@ -1,5 +1,5 @@
 [core]
-	excludesfile = ~/.git/ignore
+	excludesfile = ~/.config/git/ignore
 	editor = vim
 
 [merge]
