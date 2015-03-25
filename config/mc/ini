@@ -1,4 +1,5 @@
 [Midnight-Commander]
+skin=xoria256
 verbose=1
 pause_after_run=1
 shell_patterns=1
@@ -80,7 +81,6 @@ editor_filesize_threshold=64M
 editor_stop_format_chars=-+*\\,.;:&>
 mcview_eof=
 ignore_ftp_chattr_errors=true
-skin=xoria256
 
 filepos_max_saved_entries=1024
 

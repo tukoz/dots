@@ -24,7 +24,9 @@ export BASHRC_SOURCED_BY="$BASHRC_SOURCED_BY|$(ps -p $$ -o pid= -o ppid= -o comm
 
 #  Source global definitions
 # Is always executed on (shell) login [A,RH,D]
-# DOIN: other systems
+# DOIN: 
+#   OSes != Arch
+#   vimdiff: statusline shows correct file's path
 
 # Check if System-wide bash setting exist; if so use it (ie suppose it's sourced); if not, do what it does
 if [[ -z /etc/bashrc ]]; then

@@ -111,8 +111,8 @@ if [[ -n $XDG_CONFIG_HOME ]]; then
                                 && export      VIMDOTDIR="$XDG_CONFIG_HOME/vim"
     # Network, git, gnupg
     [[ -d $XDG_CONFIG_HOME ]]   && export     ARIA2_HOME="$XDG_CONFIG_HOME/aria2" \
-                                && export     GIT_CONFIG="$XDG_CONFIG_HOME/git" \
                                 && export      GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+    # (! Git uses this for local repo, not --global)   && export     GIT_CONFIG="$XDG_CONFIG_HOME/git/config"
     # X
     [[ -d $XDG_CACHE_HOME ]]  && export       XAUTHORITY="$XDG_CACHE_HOME/Xauthority"
 
@@ -137,7 +137,7 @@ if [[ -n $XDG_CONFIG_HOME ]]; then
     #}}}2
 else
     # Use $HOME/[.dotfiles] {{{2
-    export        GIT_CONFIG=~/.git
+    # (! Git uses this for local repo, not --global) export        GIT_CONFIG=~/.git/config
 
     # My Paths
     if [[ -d "$HOME/bin" ]] ; then
