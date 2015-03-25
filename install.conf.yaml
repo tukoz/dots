@@ -19,6 +19,7 @@
       ~/.gitignore: config/git/ignore
 #     ~/.xinitrc: config/X/initrc
 #     ~/.xsession: config/X/session
+      ~/bin: bin/
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
