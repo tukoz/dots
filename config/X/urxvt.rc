@@ -1,0 +1,158 @@
+!
+! ~/.Xresources: URxvt {{{
+!
+
+! [ Refs ] ------------------------------------- {{{2
+! Afterstep (Xdefaults): http://wiki.afterstep.org/index.php?title=Rxvt-Unicode_Configuration_Tutorial
+! Perfect for use with Openbox: http://crunchbanglinux.org/wiki/urxvt
+! Arch s rather thorough doc:	https://wiki.archlinux.org/index.php/Urxvt
+
+! To make these settings universal for all forms of URxvt, you may add a wildcard.
+! For example, URxvt*.depth would become URxvt*.depth.
+!  Xressources don t take comas.
+
+! General settings ----------------------------- {{{2
+URxvt*.termName: rxvt
+! URxvt*.urgentOnBell: true
+URxvt*.visualBell: true
+URxvt*.loginShell: true
+
+URxvt*.cutchars: "()*,<>[]{}|'"
+URxvt*.print-pipe: cat >/tmp/xxx
+
+! - Scrollback buffer lines
+! 65535 is max on most machines (64 is default)
+URxvt*.saveLines: 1000
+! do not scroll with output
+URxvt*.scrollTtyOutput:      false
+! scroll in relation to buffer (with mouse scroll or Shift+Page Up)
+URxvt*.scrollWithBuffer:     true
+! scroll back to the bottom on keypress
+URxvt*.scrollTtyKeypress:    true
+! Stop URxvt*..Scrolling as you need
+! You want to scroll back in the history and check something?
+! Press Ctrl-s. This will pause the program. When you re done, press Ctrl-q to continue:
+
+! Fonts ---------------------------------------- {{{2
+! run "fc-list" for a list of available fonts
+
+URxvt*.allow_bold: true
+
+! - use a bitmap font
+!URxvt*.font:        -xos4-terminus-medium-*-*-*-12-*-*-*-*-*-*-*
+!URxvt*.boldFont:    -xos4-terminus-bold-*-*-*-12-*-*-*-*-*-*-*
+!
+! Xft: Bitstream fonts
+!  Fedora/debian packages: bitstream-vera-sans-mono-fonts/ttf-bitstream-vera
+!URxvt*.font:	  xft:Bitstream Vera Sans Mono:pixelsize=12:antialias=true:hinting=true
+!URxvt*.boldFont: xft:Bitstream Vera Sans Mono:bold:pixelsize=12:antialias=true:hinting=true
+!
+! Xft: DejaVu fonts
+URxvt*.font:		 xft:DejaVu Sans Mono:size=10
+URxvt*.boldFont: xft:DejaVu Sans Mono:bold:size=10
+!URxvt*.font:		 Xft:DejaVu Sans Mono:pixelsize=15:antialias=true:hinting=true
+!URxvt*.boldFont: xft:DejaVu Sans Mono:bold:pixelsize=15:antialias=true:hinting=true
+!URxvt*.font:			 xft:DejaVuSansMono:pixelsize=14,xft:Symbola:pixelsize=10
+!URxvt*.boldFont:  xft:DejaVuSansMono:pixelsize=14:bold,xft:Symbola:pixelsize=6:bold
+!
+! Xft: Liberation fonts
+!  Fedora/debian packages: liberation-mono-fonts/ttf-liberation
+!URxvt*.font:	 xft:Liberation Mono:pixelsize=13:antialias=true:hinting=true
+!URxvt*.boldFont: xft:Liberation Mono:bold:pixelsize=13:antialias=true:hinting=true
+!
+! Xft: Terminus fonts
+!  Fedora/debian packages: terminus-fonts/xfonts-terminus
+!URxvt*.font:	  xft:terminus:pixelsize=15
+!URxvt*.boldFont: xft:terminus:bold:pixelsize=15
+!URxvt*.font:     xft:Terminus:8
+!
+! Xft: Other fonts
+!URxvt*.font:       xft:Monospace:size=10
+!URxvt*.boldFont:   xft:Monospace:bold:pixelsize=14
+!URxvt*.font:       xft:inconsolata:pixelsize=14
+
+! - Font Spacing
+! URxvt*.can have problems with the spacings of some fonts (eg Terminus), an option has been introduced in the latest version (9.07), allowing you to manually tweak the spacings
+! Where -1 decreases the spacing by one pixel, and can be adjusted as needed.
+URxvt*.letterSpace: -1
+
+URxvt*.underlinecolor: #999999
+
+! Appearance ----------------------------------- {{{2
+URxvt*.geometry: 90x30
+! URxvt*.fading: 0
+URxvt*.lineSpace: 0
+
+! Set icon
+URxvt*.iconFile:	/usr/share/icons/Faenza/apps/scalable/xterm-color_32x32.svg
+
+! Set Borders
+!URxvt*.borderless: 1
+URxvt*.internalBorder: 0
+URxvt*.externalBorder: 0
+
+! Set Cursor
+URxvt*.cursorBlink: true
+URxvt*.cursorUnderline: false
+!URxvt*.cursorColor: see Colors
+
+! Set Pointer
+URxvt*.pointerBlank: true
+
+! Set Scrollbar
+URxvt*.scrollBar: false
+! scrollbar position - left=false (default) or right=true
+URxvt*.scrollBar_right: false
+! scrollbar style - rxvt (default), plain, next, or xterm
+URxvt*.scrollStyle: rxvt
+
+! Set Transparency
+
+! -  Native transparency
+!URxvt*.transparent: true
+! shading: 0 to 99 darkens, 101 to 200 lightens (Native transparency)
+! don t use Shading with tintColor; just use a darker or lighter (tint) color instead.
+!URxvt*.shading: 20
+
+! -  True transparency
+! True Transparency needs a compositing manager like xcompmgr
+! in OpenBox it is enabled from the main menu → Preferences → compositing → enable compositing
+! or alternatively uncomment the entry in your ~/.config/openbox/autostart.sh file to have it start automatically.
+URxvt*.depth: 32
+! AND set background with [<1-100%>]<color in Hexa>, below
+! where '95' is the opacity level in percentage and '#000000' is the background color.
+
+! - Console Bg and Fg
+URxvt*.background: 80 #000000
+
+! Extensions ----------------------------------- {{{2
+URxvt*.matcher.button:				1
+
+! URL/Clipboard Handling
+URxvt*.perl-ext-common:			default,vtwheel,matcher
+URxvt*.colorUL:							#81a2be
+URxvt*.urlLauncher: /usr/bin/firefox
+URxvt*.url-select.launcher:	firefox
+URxvt*.url-select.underline: true
+
+!}}}2
+! Mapping Keys --------------------------------- {{{2
+
+! Liberate CONTRoL-SHIFT
+URxvt*.iso14755:		false
+URxvt*.iso14755_52: false
+
+! Make Home & End keys work
+! man urxvt » 'keysym.sym: action'
+URxvt*keysym.Home:	\033[1~
+URxvt*keysym.End:		\033[4~
+
+! Mapping key for a certain program, eg 'screen'
+!URxvt.keysym.C-S-Up:				perl:font-size:increase
+!URxvt.keysym.C-S-Down:			perl:font-size:decrease
+!URxvt.keysym.C-S-Pageup:		perl:font-size:decrease
+!urxvt.keysym.F11:					perl:fullscreen:switch
+!}}}2
+!}}}
+
+! vim:fdm=marker

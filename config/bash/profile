@@ -1,0 +1,32 @@
+#
+# ~/.bash_profile
+#
+#  Bash Interactive LOGIN Shell Setup
+########################################################################
+
+# = ~/.profile for Bash, ie Bash specific Environnement variables for interactive login shell.
+# A Bash login shell will try ~/.bash_profile, ~/.bash_login and ~/.profile
+# in order and only open the first one it finds.
+# Here we use ~/.profile if it exists, lookin for ~/.bashrc anyway:
+
+# profiling {{{
+export BASH_PROFILE="1"
+export BASH_PROFILE_SOURCED="$BASH_PROFILE_SOURCED|$(date +%s)"
+export BASH_PROFILE_SOURCED_BY="$BASH_PROFILE_SOURCED_BY|$(ps -p $$ -o pid= -o ppid= -o comm= -o args= -o fuser=) $(date +%s)"
+
+# Check which files are sourced before/after reading a login shell
+#echo Aliases before .profile
+#echo $(alias | cut -d '=' -f 1 | sort -u)
+
+# By default (Arch, i3-wm):
+#   ~/.(bash_)profile & .bashrc are read on login shell + manualy opened TERMs
+#   ~/.bashrc only is read after "GUI login" eg by i3lock
+#}}}
+
+# Set Shell-agnostic environment config
+[[ -r $HOME/.profile ]] && source $HOME/.profile
+
+# Have ~/.bashrc (ie interactive non-login bash config) read by a login shell
+# set by ~/.profile
+
+# vim:fdm=marker

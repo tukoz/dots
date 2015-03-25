@@ -1,0 +1,628 @@
+" Vim config: 	kozaki's Vimrc {{{
+" Author: 		kozaki <kozaki[at]lliseil.fr>
+" Update: 		2015-03-19
+" Sources/Inspiration:
+"  Excellent http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim#2559262
+"  https://wiki.archlinux.org/index.php/Vim#Example_configurations
+"  http://dominique.pelle.free.fr/.vimrc.html
+"  'editeur' note)
+"
+" DONE: thématisé ; +Vundle ; + XDG - 2015-01-09
+" DOIN:
+" Gracefully degrading vimrc  http://blog.sanctum.geek.nz/gracefully-degrading-vimrc/
+" XDG:
+" XDG compatibility: https://tlvince.com/vim-respect-xdg
+" rafi's modular Vim config (lliseil)
+" Workflow:
+" 	How to boost your Vim productivity http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+"	plugins 'TODO'
+"}}}
+
+" 1.CORE options {{{
+" 1.0.reset to vim-defaults {{{2
+if &compatible              " only if not set before
+  set nocompatible          " use vim-defaults instead of vi-defaults (Vundle required)
+endif
+"}}}
+" 1.1.Environment {{{2
+" Respect XDG if it is set and vimdir exists (create Vim dirs)
+if isdirectory($XDG_CONFIG_HOME.'/vim')
+	let $VIMPATH=expand('$XDG_CONFIG_HOME/vim')
+	let $VARPATH=expand('$XDG_CACHE_HOME/vim')
+else
+	let $VIMPATH=expand('~/.vim')
+	let $VARPATH=expand('~/.cache/vim')
+endif
+
+" Set runtimepath
+set runtimepath=$VIMPATH,$VIM,$VIMRUNTIME		" must set it BEFORE callin eg Vundle
+let $MYVIMRC="$VIMPATH/vimrc"					" 'let' must have quotations marks arround PATH
+
+" Set cache, undo etc - XDG if is already set, standard if not
+if filewritable(expand("$XDG_CACHE_HOME/vim")) == 2		" le répertoire est accessible en écriture,on l'utilise.
+	set nobackup noswapfile
+	" Persistent undo (vim 7.3+)              {{{2
+	if has("persistent_undo")
+		set backupdir=$VARPATH/backup/
+		set directory=$VARPATH/swap//				" Double // causes backups to use full file path
+		"set viewdir=$VARPATH/saveview/				" Sauvegarde automatique des vues (utiles pour les replis manuels)
+		set viminfo+=n$VARPATH/viminfo				" used (among other things) to store history and search terms. DOIN:
+		set undofile								" enable persistent undo
+		let &undodir=&backupdir . "/.vimundo"		" but don't clutter $PWD
+		if !isdirectory(&undodir)					" create the undo directory if it doesn't already exist
+			exec "silent !mkdir -p " . &undodir
+		endif
+	endif
+else
+	if has("unix") || has("win32unix")				" c'est un système compatible UNIX, on crée le répertoire, on l'utilise.
+			call system("mkdir -p $VARPATH")		" ~/.cache/vim in both cases (XDG or not)
+			set backupdir=$VARPATH,~/temp,/tmp		" itou + secondary choices
+	endif
+endif
+
+"DOIN: set spellfile=$XDG_CONFIG_HOME/vim/spell/fr.utf-8.spl
+"au BufWinLeave *.* mkview
+"au BufWinEnter *.* silent loadview
+"}}}
+" Vundle & plugins {{{2
+" documentation at https://github.com/gmarik/vundle#readme
+
+" Install vundle if not already installed {{{3
+if has("user_commands")
+	" Setting up Vundle - the vim plugin bundler
+	let VundleInstalled=0
+	let vundle_readme=expand('$VIMPATH/bundle/vundle/README.md')
+	if !filereadable(vundle_readme)
+		echo "Installing Vundle.."
+		echo ""
+		silent !mkdir -p $VIMPATH/bundle
+		silent !git clone https://github.com/gmarik/vundle.git $VIMPATH/bundle/vundle
+		let VundleInstalled=1
+	endif
+	"}}}3
+
+	" Set the runtime path to include Vundle and initialize
+	"set rtp+=$VARPATH/bundle/vundle
+	"runtime autoload/vundle.vim " apparently without this the exists() check fails
+	"call vundle#begin(expand('$VARPATH)'.'/bundle')
+	set rtp+=$VIMPATH/bundle/vundle
+	call vundle#begin(expand('$VIMPATH').'/bundle')
+endif
+if exists("*vundle#rc")
+	" let Vundle manage Vundle, required
+	filetype off															" Vundle required
+	" if vundle is missing, bootstrap it with
+	"   git clone https://github.com/gmarik/vundle.git <PATH-TO>/vim/bundle/vundle
+	Plugin 'gmarik/Vundle.vim'
+
+	" Plugins:
+	" list all plugins you want to have like this:
+	"   Plugin "foo.vim" for vim.org-hosted stuff
+	"   Plugin "owner/project" for github-hosted stuff
+	"   Plugin "git://git.wincent.com/command-t.git" for arbitrary URLs
+	" install ones that are missing with :BundleInstall
+	" install/upgrade them all with :BundleInstall!
+	" search for new ones with :BundleSearch keyword
+	" bundles are kept in <VIMPATH (or VARPATH) /vim/bundle/
+
+	" Navigation:
+	Plugin 'vim-scripts/mru.vim'			" manage Most Recently Used (MRU) files; TODO: see ctrlp.vim: Fuzzy file, buffer, mru, tag, etc finder.
+	"Plugin 'fholgado/minibufexpl.vim'		" Elegant buffer explorer - takes very little screen space
+	"Plugin 'edsono/vim-matchit'			" Configure % to match more than just single characters for HTML, LateX, and many other languages. included in the standard vim distribution since v 6.0.
+	Plugin 'majutsushi/tagbar'				" browse the tags of the current file and get an overview of its structure
+	Plugin 'sjl/gundo'
+	" Notes:
+	Plugin 'Rykka/riv.vim'					" Taking notes with reStructuredText:
+	Plugin 'Rykka/rhythm.css'
+	Plugin 'Rykka/InstantRst'
+	" Markdown:
+	Plugin 'godlygeek/tabular'				" vim script for text filtering and alignment
+	Plugin 'plasticboy/vim-markdown'	" Markdown syntax highlighting, matching rules and mappings
+	Plugin 'suan/vim-instant-markdown'	" instant Markdown previews from Vim + a browser
+	" Visual Helpers:
+	Plugin 'bling/vim-airline'				" lean and mean status/tabline for vim that's lights as air
+	" Coding:
+	Plugin 'Chiel92/vim-autoformat'		" easy code formatiing in Vim
+	Plugin 'closetag.vim'							" functions and mappings to close open HTML/XML tags
+	Plugin 'scrooloose/syntastic'			" Code syntax checking hacks for Vim
+	" Automation:
+	"Plugin 'Smart-Tabs'							" use tabs for indent (beg. of lines), spaces for alignment
+	" intelligent completion
+	Plugin 'ervandew/supertab'				" use <Tab> for all ur insert completions needs
+	" Evaluating SnipMate replacement -- YouCompleteMe breaks SnipMate
+	"Plugin 'sirver/ultisnips'				" powerful snippets engine
+	"Plugin 'honza/vim-snippets'			" snippets (to use with ultisnips)
+	"Plugin 'Valloric/YouCompleteMe'	" as-u-type, fuzzy-search code completion engine for Vim.
+	" Style:
+	Plugin 'altercation/vim-colors-solarized'
+	Plugin 'w0ng/vim-hybrid'					" dark colour scheme for Vim & gVim v7.3+
+	Plugin 'guns/xterm-color-table.vim' " See all 256 xterm colors right in Vim
+	" All of your Plugins must be added before the following line
+	call vundle#end()            " required
+endif
+" }}}
+
+" Use of the filetype plugins, auto completion and indentation support:
+" (must come after Plugins' setup)
+if v:version >= 600
+	filetype plugin on    " load filetype plugins
+	filetype indent on    " load indent plugins
+endif
+"}}}
+
+" Editor settings				{{{
+set lazyredraw					" no redraws in macros
+set confirm						" get a dialog when :q, :w, or :wq fails
+set nobackup					" no backup~ files, use undo
+set viminfo='20,\"500			" remember copy registers after quitting in the .viminfo file -- 20 jump links, regs up to 500 lines'
+set hidden					    " remember undo after quitting
+set history=500					" remember N lines of command history
+set mouse=v					    " use mouse in visual mode (not normal,insert,command,help mode
+
+set esckeys						" map missed escape sequences (enables keypad keys)
+set ignorecase					" Case insensitive searching,
+set smartcase					" but become case sensitive IF you type UPPERCASE characters
+set magic						" change the way backslashes are used in search patterns
+set bs=indent,eol,start			" Backspacing over everything in insert mode
+
+if v:version >= 600
+  set clipboard=unnamed         " interoperate with the X clipboard
+  set splitright                " self-explanatory
+endif
+
+" Code Editing									{{{2
+set path+=**                    " let :find do recursive searches
+set tags-=./TAGS                " ignore emacs tags to prevent duplicates
+set tags-=TAGS                  " ignore emacs tags to prevent duplicates
+set tags-=./tags                " bin/tags is not a tags file;
+set tags+=tags;$HOME            " look for tags in parent dirs
+set suffixes+=.class            " ignore Java class files
+set suffixes+=.pyc,.pyo         " ignore compiled Python files
+set suffixes+=.~1~,.~2~         " ignore Bazaar droppings
+
+" Files Type and Localization		{{{2
+set encoding=utf8
+set ffs=unix,dos,mac					" Use Unix as the standard file type
+"set fileformat=unix					" file mode is unix
+"set fileformats=unix,dos    	" only detect unix file format, displays that ^M with dos files
+set wildignore=*.o,*~,*.pyc 	" Ignore compiled files
+"}}}
+"}}}
+
+" Display settings {{{
+
+" Color settings  {{{2
+set background=dark     " for dark terminals
+if &t_Co > 2 || has("gui_running")
+	if has("syntax")
+		syntax on						" enable colors
+	endif
+	set hlsearch					" highlight search (very useful!)
+	nohlsearch						" but not initially
+	set incsearch					" search incremently (search while typing)
+endif
+" Set extra options when running in GUI mode
+if has("gui_running")
+	set guioptions-=T
+	set guioptions+=e
+	set guioptions-=L			" disable left scrollbar in GUI
+	"set guioptions-=m          " disable GUI menu
+	set t_Co=256
+	set guitablabel=%M\ %t
+	set t_vb=					
+endif
+try
+	colorscheme hybrid
+	"colorscheme solarized
+catch
+	colo elflord
+endtry
+
+" Term dependant 	{{{3
+if $TERM == "xterm" || $TERM == "rxvt" || $TERM == "xterm-256color" || $TERM == "screen-256color" || $TERM == "rxvt-unicode" || &term =~ "builtin_gui" || $TERM == "dumb"
+	set ttyfast							" Accélère l'affichage en disant à vim que nous utilisons un terminal rapide
+	"set mouse=a           	" Enable mouse use in all modes
+	set ttymouse=urxvt			" Set this to the name of your terminal that supports mouse codes
+	" 256-colours' vim:
+	" Due to the limited 256 palette, colours in Vim and gVim will still be slightly
+	" different. In order to get the same colours as gVim and use this colourscheme
+	" the way that it was intended, it is highly recommended that you:
+	" 1. Add these colours to ~/.Xresources:
+	"     https://gist.github.com/3278077
+	" 2. Use Xresources colours by setting in vimrc:
+	let g:hybrid_use_Xresources = 1
+	" as for Screen...
+	" ...add something like http://gist.github.com/636883 to .bashrc
+	hi Normal ctermbg=NONE		" set vim bg transparent
+endif
+
+" Status Bar							{{{2
+set laststatus=2					" use 2 lines for the status bar
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+set showmode							" show mode in status bar (insert/replace/...)
+set showcmd								" show typed command in status bar
+set ruler									" show cursor position in status bar
+set rulerformat=%15(%c%V\ %p%%%)
+
+" Other										{{{2
+set nowrap							" dont wrap lines
+
+" Indents & Tabs				{{{2
+" ----------------
+set noexpandtab					"keep as tabs - not spaces | tabs rule, spaces drool! at least by default
+set tabstop=2						" 1 tab == N spaces
+set softtabstop=4				" Make the <tab> key more useful while editing
+set smarttab						" smart tab handling for indenting
+set autoindent					" indentation automatique avancée (! makes # comments no indent)
+set shiftround					" Round indent to multiple of 'shiftwidth'
+set shiftwidth=2				" Number of spaces to use in auto(indent)
+if has('smartindent')
+	set smartindent				" autoindenting new lines, ain't smart enough eg stop indenting '#' comments
+endif
+
+" Folding 								{{{2
+if has('folding')
+	" set foldmethod=marker   " use method marker by default
+	set foldlevelstart=1    " initially close all folds
+	set foldenable
+	set foldtext=FoldText() " beautifull indents
+endif
+
+" Linebreaks 							{{{2
+set lbr								" nice line breaking: on
+set tw=500							" 500 characters textwidth
+if has("linebreak")
+	"let &sbr = nr2char(8618).' '  " Show ↪ at the beginning of wrapped lines
+	set showbreak=↪               " (+linebreak)
+endif
+" Changing characters to fill special ui elements
+set fillchars=vert:│,fold:─   " (+windows +folding)
+set list listchars=tab:\⋮\ ,extends:⟫,precedes:⟪,nbsp:.,trail:·
+
+" Fonts										{{{2
+" ----------------
+if has("unix")
+	set guifont=Inconsolata\ 10
+else
+	set guifont=Consolas:h10
+endif
+
+" Lists										{{{2
+" ------------
+if v:version >= 600
+	set listchars+=precedes:<
+endif
+
+if v:version >= 700
+	set listchars+=nbsp:_
+endif
+
+" Scrolling								{{{2
+
+set scrolloff=3						" Always keep cursor N lines from window edges
+" Scroll the viewport faster:
+nnoremap <C-e> 3<C-e>
+nnoremap <C-y> 3<C-y>
+" <zz> is also handy; it centers the window on the cursor without moving the cursor.
+" Smooth scrolling in Vim:	https://stackoverflow.com/questions/4064651/what-is-the-best-way-to-do-smooth-scrolling-in-vim
+"  Ctrl-B and Ctrl-F = PageUp and PageDown = scroll by full page
+"  Ctrl-U and Ctrl-D = scroll half a page by default
+"  Ctrl-Y and Ctrl-E = scroll one line
+
+" Visual helpers ---------------------------{{{2
+set number								" show line numbers (toggle with <L>tn)
+" My colour overrides
+" set the numbers' column color:
+highlight LineNr	term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
+"highlight LineNr	ctermfg=DarkGrey
+"hi SpecialKey      ctermfg=gray guifg=gray term=standout
+"hi MatchParen      cterm=bold ctermbg=255 gui=bold guibg=NONE guifg=lightblue
+"hi SpellBad        cterm=underline ctermfg=red ctermbg=NONE
+"hi SpellCap        cterm=underline ctermfg=blue ctermbg=NONE
+hi Comment			term=none ctermfg=darkgrey
+highlight DiffText	ctermbg=1			" avoid invisible color combination (red on red)
+set cursorline							" Useful to easily spot the cursor.  Will make screen redrawing slower.
+set title								" show file in titlebar
+set wildmenu							" completion with menu
+set wildignore=*.o,*.obj,*.bak,*.exe,*.py[co],*.swp,*~,*.pyc,.svn
+set showmatch							" show matching bracket (briefly jump)
+set matchtime=2							" show matching bracket for 0.2 seconds
+set matchpairs+=<:>						" specially for html
+" Highlight column 81 (Vim 7.3+ only):
+if v:version >= 703
+	set cc=81
+	hi ColorColumn ctermbg=Gray ctermfg=Black guibg=#404040
+	"command Skinny set cc=73					" 'Command already set'
+	"command Wide set cc=80
+endif
+"}}}
+"/Display }}}
+
+" Mappings {{{
+" A map leader allows for executing actions by key sequences (instead of key combinations)
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
+
+" Display {{{2
+" -------------------------
+" Toggle display hidden characters
+map <leader>tl :setlocal nolist!<cr>
+" Toggle show number on and off
+map <leader>tn :setlocal number!<cr>
+" Toggle paste mode on and off
+map <leader>tp :setlocal paste!<cr>
+" Toggle wrap mode on and off
+map <leader>tw :setlocal wrap!<cr>
+" Focus the cursor at the center of window
+nmap <leader>z z.<cr>
+" Focus the current fold by closing all others
+nnoremap [unite]z mzzM`zzv
+
+" Navigation {{{2
+" -------------------------
+nmap <leader>gp :previous<cr>
+" File Explorer (built-in Netrw)
+map <leader>te   :25Lexplore<CR>
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+" Quickly open a buffer for scripbble
+map <leader>q :e ~/buffer<cr>
+
+" Cleaning {{{2
+" -------------------------
+"clean trailing spaces in lines copied from console/vim
+map <leader>rs :%s/\s\+$//ge<cr>
+" Remove the Windows ^M - when the encodings gets messed up
+noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+
+" Tabs  {{{2
+" -------------------------
+map <leader>tnv :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+" Spell checking  {{{2
+" -------------------------
+map <leader>ts :setlocal spell!<cr>
+map <leader>se :setlocal spell spelllang=en<cr>
+map <leader>sn ]s 		" next spelling
+map <leader>sp [s 		" prev spelling
+map <leader>sa zg 		" spelling good, add
+map <leader>s? z= 		" spelling suggestions
+" good doc in 	https://wiki.archlinux.org/index.php/Vim#Spell_checking
+" ~ 	~ 	~ 	http://henry.precheur.org/vim/create_spell_file_for_vim
+
+" Other {{{2
+map <leader>ti :setlocal smartindent!<cr>	# toggle smartindent for eg indenting '#' comments.
+" }}}2
+" Plugins: in plugins.
+" }}}
+
+" Helper functions {{{
+" Returns true if paste mode is enabled (used in Status line)
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    en
+    return ''
+endfunction
+
+" Delete trailing white space on save, useful for Python and CoffeeScript ;)
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite *.py :call DeleteTrailingWS()
+autocmd BufWrite *.coffee :call DeleteTrailingWS()
+
+" Navigation {{{2
+
+  " Always jump to the last known cursor position. (i want this!)
+  " Don't do it when the position is invalid or when inside
+  " an event handler (happens when dropping a file on gvim).
+if has("autocmd")
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+endif " has("autocmd")
+" Remember info about open buffers on close:
+set viminfo^=%
+
+function! s:auto_mkdir(dir, force)
+	if !isdirectory(a:dir) && (a:force ||
+				\ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+		call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+	endif
+endfunction
+"}}}
+
+" Nicer fold text
+" See: http://dhruvasagar.com/2013/03/28/vim-better-foldtext
+function! FoldText()
+	let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+	let lines_count = v:foldend - v:foldstart + 1
+	let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
+	let foldchar = matchstr(&fillchars, 'fold:\zs.')
+	let foldtextstart = strpart('+' . repeat(foldchar, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
+	let foldtextend = lines_count_text . repeat(foldchar, 8)
+	let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
+	return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
+endfunction
+"}}}
+
+" File type specific settings {{{
+" au/autocmd load settings for a specified filetype only.
+if has("autocmd")
+  " For debugging
+  "set verbose=9
+
+  " if bash is sh
+  let bash_is_sh=1
+
+  " change to directory of current file automatically
+  autocmd BufEnter * lcd %:p:h
+
+	" Settings per filetype:
+	"	 	html: fdm=indent ts=2 sw=2 foldlevel=1 autoindent
+	"	+ css, javascript		: We also want the previous line folded with the next
+	"	  text:
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup mysettings
+    au FileType sh,config,c,cpp			set smartindent shiftwidth=2 softtabstop=2 expandtab
+    au FileType xslt,xml,css,html,xhtml,javascript,docbook	setlocal fdm=indent autoindent sw=2 ts=2
+    " plugin: CloseTag auto-load
+    au FileType html,htmldjango,jinjahtml,eruby,mako		let b:closetag_html_style=1
+    au FileType tex			set wrap shiftwidth=2 softtabstop=2 expandtab
+		" chargement du type de fichier pour le format txt
+		au BufEnter *.txt		set filetype=text
+		au FileType text		setlocal nowrap shiftwidth=2 softtabstop=2 expandtab
+		" to treat .text, README, and .md files as markdown files see https://github.com/chadgh/configs-utils/blob/master/dotfiles/vimr
+		" one can also source a file:
+		"autocmd FileType markdown,tex,textile source $VIMDOTDIR/lang_settings/text.vim
+
+    " Confirm to PEP8
+    au FileType python set tabstop=4 softtabstop=4 expandtab shiftwidth=4 cinwords=if,elif,else,for,while,try,except,finally,def,class
+  augroup END
+
+  " Perl {{{2
+  augroup perl
+    " reset (disable previous 'augroup perl' settings)
+    au!
+
+    au BufReadPre,BufNewFile
+    \ *.pl,*.pm
+    \ set formatoptions=croq smartindent shiftwidth=2 softtabstop=2 cindent cinkeys='0{,0},!^F,o,O,e' " tags=./tags,tags,~/devel/tags,~/devel/C
+    " formatoption:
+    "   t - wrap text using textwidth
+    "   c - wrap comments using textwidth (and auto insert comment leader)
+    "   r - auto insert comment leader when pressing <return> in insert mode
+    "   o - auto insert comment leader when pressing 'o' or 'O'.
+    "   q - allow formatting of comments with "gq"
+    "   a - auto formatting for paragraphs
+    "   n - auto wrap numbered lists
+    "
+  augroup END
+  "}}}2
+endif
+"}}}
+
+" Plugin-dependant Settings "{{{
+" Gracefully degrading vimrc: check if plugin exist: ?
+" with: `if exists("*vundle#rc")` ?
+
+" MRU
+if has("eval")
+	let MRU_Max_Entries = 400
+	map <leader>f :MRU<CR>
+endif
+
+" Code 										{{{2
+
+" Mapping for autocompletion  {{{3
+"au filetype html        set omnifunc=htmlcomplete#CompleteTags
+"au filetype html        set omnifunc=htmlcomplete#CompleteTags
+au filetype css         set omnifunc=csscomplete#CompleteCSS
+au filetype javascript  set omnifunc=javascriptcomplete#CompleteJS
+au filetype c           set omnifunc=ccomplete#Complete
+au filetype php         set omnifunc=phpcomplete#CompletePHP
+au filetype ruby        set omnifunc=rubycomplete#Complete
+au filetype sql         set omnifunc=sqlcomplete#Complete
+au filetype python      set omnifunc=pythoncomplete#Complete
+
+	" CloseTag.vim  {{{3
+	if has("eval")
+		au filetype html,xml    runtime bundle/closetag.vim/plugin/closetag.vim
+		map <F6> <C-_>
+		imap <F6> <C-_>
+		" TODO: Omni-completion par CTRL-X_CTRL-O
+	endif
+
+	" Completion                                                 {{{2
+	if has("eval")
+	" supertab: >-N		TODO
+	 
+	" YouCompleteMe TODO  http://vimawesome.com/plugin/youcompleteme
+		" auto-triggering breaks typing-then-<Up>/<Down> navigation in insert mode
+		" auto-triggering also breaks foo<C-p> completion
+		let g:ycm_auto_trigger = 0
+		" so I'm confused: I'd think I'd want this, but it appears to already
+		" detect my tags, despite the docs saying this is off by default?
+		" eh, maybe I had the right buffers open at that time.
+		" BTW apparently I need ctags --fields=+l for YCM to work
+		""let g:ycm_collect_identifiers_from_tags_files = 1
+		" I hate when the preview window stays on screen
+		let g:ycm_autoclose_preview_window_after_completion = 1
+	endif
+
+	" Syntastic  (:h Syntastic)		                               {{{3
+	if has("eval")
+		let g:syntastic_always_populate_loc_list = 1  " default is 0
+		let g:syntastic_auto_loc_list = 2             " default is 2
+		let g:syntastic_check_on_open = 1             " default is 0
+		let g:syntastic_enable_signs = 1              " default is 1
+		let g:syntastic_enable_baloons = 1            " default is 1
+		let g:syntastic_enable_highlighting = 1       " default is 1
+		let g:syntastic_auto_jump = 0                 " default is 0
+		let g:syntastic_check_on_wq = 0
+	" let g:syntastic_quiet_warnings = 1
+	" let g:syntastic_disabled_filetypes = ['ruby', 'php']
+
+		" statusline format (default: '[Syntax: line:%F (%t)]')
+		let g:syntastic_stl_format = '{%t}'
+		set statusline+=%#warningmsg#
+		"set statusline+=%{SyntasticStatuslineFlag()}
+		set statusline+=%*
+
+		" fun with unicode
+		let g:syntastic_error_symbol = '⚡'
+		let g:syntastic_warning_symbol = '⚠'
+
+		" For forcing the use of flake8, pyflakes, or pylint set
+	" let g:syntastic_python_checker = 'pyflakes' " BBB
+	" let g:syntastic_python_checkers = ['pyflakes']
+		let g:syntastic_python_checkers = ['flake8']
+	endif
+
+" Visual Plugins {{{2
+	" vim-airline config
+	if has("eval")
+		let g:airline_theme="luna"
+	endif
+" }}}
+" SGI Plugins {{{2
+
+	if has("eval")
+	" Gundo
+		nmap <F5> :GundoToggle<CR>
+	" TagBar
+		nmap <F8> :TagbarToggle<CR>
+		
+	" riv.vim
+		let project1 = { 'bloggin': 'My Working Notes', 'path': '~/Private/sgi/_bloggin',}
+		let project2 = { 'Organize': 'My Working Notes', 'path': '~/Private/sgi/_organize',}
+		let g:riv_projects = [project1, project2]
+		map <leader>rcd :RivCreateDate<CR>
+		map <leader>rcl :RivCreateLink<CR>
+		map <leader>rcf :RivCreateFoot<CR>
+		map <leader>rce :RivCreateEmphasis<CR>
+		map <leader>rcs :RivCreateStrong<CR>
+
+	" ultisnips TODO: http://vimawesome.com/plugin/ultisnips-forever-and-always
+
+	" vim-instant-markdown
+		" manually launch the preview window when you open a markdown file.
+		let g:instant_markdown_autostart = 0
+		" You can then manually trigger preview via the command `:InstantMarkdownPreview`
+		nmap <leader>sm :InstantMarkdownPreview<cr>
+	endif
+	" }}}2
+"}}}
+
+" vim:foldmethod=marker:sw=4:ts=4:sts=4

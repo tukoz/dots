@@ -1,0 +1,199 @@
+#############################################################
+# Generic configuration that applies to all shells
+#############################################################
+
+# ~/.profile should be kept Bash agnostic (like 'PATH' and 'LC_*')
+# Is used by many shells as FALLBACK.
+# eg a login shell will try ~/.bash_profile, ~/.bash_login and then ~/.profile,
+# in ORDER and only open the FIRST one it finds.
+#
+# GUI apps environnement variables can be set in ~/.xinitrc
+#
+# Inspiration
+# github.com/rafi bash's exports
+
+# Profiling {{{
+## Figure what to do with ~/.profile within one's environment:
+export PROFILE="1"
+
+LOG="$HOME/profile-invocations"
+echo "-----" >>$LOG
+echo "Caller: $0" >>$LOG
+echo "DESKTOP_SESSION: $DESKTOP_SESSION" >>$LOG
+echo "GDMSESSION: $GDMSESSION" >>$LOG
+# After a login, looking at ~/profile-invocations will tell what's the test to be used. For Ubuntu 12.04, the test have to be "$0" = "/usr/sbin/lightdm-session".
+#}}}
+
+## SSH {{{
+
+# Run ssh-add when needed and destroy the alias afterwards
+
+# 5) "GUI login" ⚡⚡⚡
+# Un seul ssh-agent pour login standard ou "GUI", se recréant à la demande.
+# Maintains a 'agent.env' file for you, with an environment pointing at the user's currently running ssh-agent. If the agent dies, opening a new terminal window will spawn one automatically (and add your keys for you), which is shared between all subsequent windows and terms.
+# Si trouve 'fichier ssh-agent'; le source; si périmé le kill et génère un nvl agent.
+# source: Administration Linux à 200% by Rob Flickenger.
+
+if [[ -d "$HOME/.ssh" ]]; then
+	AGENT_ENV="$HOME/.ssh/agent.env"
+
+	if [[ -f "$AGENT_ENV" ]]; then
+		. $AGENT_ENV > /dev/null
+		if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1 ; then
+        # if there is a running process with the given PID, then
+            echo "fichier ssh-agent périmé trouvé. On génère un nouvel agent..."
+            # "Stale agent file found. Spawning new agent..."
+            eval `ssh-agent | tee $AGENT_ENV`
+            ssh-add
+		fi
+	else
+		echo "Starting ssh-agent..."
+		eval `ssh-agent | tee $AGENT_ENV`
+		ssh-add
+	fi
+fi
+
+# Detect if SSH connection
+if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
+    export IS_SSH=1
+fi
+#}}}
+
+# Load Shell agnostic paths and environment variables (XDG only if exists allready) {{{
+########################################################################
+
+# HELP config files go to thir $XDG's places if XDG exists (eg CACHE,CONFIG,LOCAL/$APP_NAME):
+# Do not force XDG, ie create XDG dirs
+
+if [[ -n $XDG_CONFIG_HOME ]]; then
+    # Use XDG paths {{{2
+    # DOIN:
+    #   if $XDG exists, move configs files to their XDG's places
+    #   » https://github.com/woegjiub/.config/blob/master/bash/bashrc
+    # References and inspiration:
+    # - http://diehealthy.org/linux/cleaning-home-xdg-base-directory
+    # - https://superuser.com/questions/874901/what-are-the-step-to-move-all-your-dotfiles-into-xdg-directories
+    # - https://github.com/woegjiub/.config/blob/master/bash/xdg.sh
+    # - https://tlvince.com/vim-respect-xdg
+    # - rewritefs: Automatically translate ~/.* to ~/.config/*  https://github.com/sloonz/rewritefs
+    # - https://github.com/rafi/dotfiles
+
+    # DOIN: Set XDG Paths {{{3
+    #[[ -z $XDG_CONFIG_HOME ]] && export XDG_CONFIG_HOME="$HOME/.config"      #|| mkdir -p $HOME/.config
+    [[ -z $XDG_CACHE_HOME ]] &&  export  XDG_CACHE_HOME="$HOME/.cache"       #|| mkdir -p $HOME/.cache
+    [[ -z $XDG_DATA_HOME ]] &&   export   XDG_DATA_HOME="$HOME/.local/share" #|| mkdir -p $HOME/.local/share
+    #$XDG_RUNTIME_DIR is auto-set (distro)
+
+    #for f in $HOME/.config/shell/*; do source "$f"; done
+
+    # My Paths {{{3
+    # set PATH so it includes user's private {bin,.scripts} if it exists
+    PATH=$PATH:"$HOME/.local/bin"
+    PATH=$PATH:"$HOME/.local/scripts"
+
+    # Shells:, TERMs {{{3
+    [[ -d "\$XDG_CONFIG_HOME/zsh" ]] && export  ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+    [[ -d $XDG_CONFIG_HOME ]] && export  URXVT_PERL_LIB="$XDG_CONFIG_HOME/urxvt/ext" \
+                            && export     RXVT_SOCKET="$XDG_RUNTIME_DIR/urxvtd.%H" \
+                            && export        SCREENRC="$XDG_CONFIG_HOME/screen/rc" \
+                            && export        TERMINFO="$XDG_CONFIG_HOME/terminfo"
+    [[ -f $XDG_CONFIG_HOME/bash/inputrc ]] && export INPUTRC="$XDG_CONFIG_HOME/bash/inputrc"
+    # ICEauthority
+    [[ -d $XDG_CONFIG_HOME ]] && export    ICEAUTHORITY="${XDG_CACHE_HOME}/ICEauthority"
+    # Less
+    [[ -d $XDG_CONFIG_HOME ]] && export    LESSHISTFILE="${XDG_CACHE_HOME}/less/history" \
+                            && export         LESSKEY="${XDG_CONFIG_HOME}/less/keys"
+    # Apps {{{3
+
+    # Vim
+    [[ -d $XDG_CONFIG_HOME/vim ]] && export      VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC' \
+                                && export      VIMDOTDIR="$XDG_CONFIG_HOME/vim"
+    # Network, git, gnupg
+    [[ -d $XDG_CONFIG_HOME ]]   && export     ARIA2_HOME="$XDG_CONFIG_HOME/aria2" \
+                                && export     GIT_CONFIG="$XDG_CONFIG_HOME/git" \
+                                && export      GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+    # X
+    [[ -d $XDG_CACHE_HOME ]]  && export       XAUTHORITY="$XDG_CACHE_HOME/Xauthority"
+
+    # MM
+    [[ -x /usr/bin/mplayer ]] && export         MPLAYER_HOME="$XDG_CONFIG_HOME/mplayer"
+    [[ -x /usr/bin/gpodder ]] && export         GPODDER_HOME="$XDG_CONFIG_HOME/gpodder"
+    [[ -d /mnt/mm/Miro ]]     && export GPODDER_DOWNLOAD_DIR="/mnt/mm/Miro"
+
+    # Virtualbox
+    hash virtualbox 2>/dev/null && export  VBOX_USER_HOME="$XDG_CONFIG_HOME/virtualbox"
+
+    # npm
+    hash npm 2>/dev/null &&  export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
+
+    # configs:
+    export  ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/config"
+    export      MAD_CONFIG="$XDG_CONFIG_HOME/mad/config"
+    export         _Z_DATA="$XDG_CACHE_HOME/z/data"
+
+    # DB
+    export MYSQL_HISTFILE="$XDG_CACHE_HOME/mysql_history"
+    #}}}2
+else
+    # Use $HOME/[.dotfiles] {{{2
+    export        GIT_CONFIG=~/.git
+
+    # My Paths
+    if [[ -d "$HOME/bin" ]] ; then
+        PATH=$PATH:"$HOME/bin"
+    fi
+    if [[ -d "$HOME/bin/scripts" ]] ; then
+        PATH=$PATH:"$HOME/bin/scripts"
+    fi
+    #export PATH=$PATH:"$HOME/.dynamic-colors/bin"
+    #}}}2
+fi
+# XDG indifferent Paths {{{2
+
+# I want that
+#export DEFAULT_CHEAT_DIR="/mnt/docs/informatik/manuels/linux/.cheats"
+# Dev {{{3
+
+# Frameworks
+#export PATH=$PATH:"$GRAILS_HOME/bin"
+#export PATH=$PATH:"$JRUBY_HOME/bin"
+
+#export PATH=~/.gem/ruby/1.8/bin:$PATH #For showoff
+
+# Node JS Packages (from Brew Install of Node and NPM)
+#PATH=$PATH:/usr/local/share/npm/bin
+
+# Always install ruby gems local to the user: TODO
+#}}}3
+#}}}2
+
+# remove duplicate path entries
+export PATH=$(echo $PATH | awk -F: '
+{ for (i = 1; i <= NF; i++) arr[$i]; }
+END { for (i in arr) printf "%s:" , i; printf "\n"; } ')
+
+# Profiling
+export PROFILE_PATHS="1"
+#}}}
+
+# Various {{{
+## DOIN: Run missed cron jobs
+#(sleep 1200 && /usr/bin/cronwhip) &
+
+## Start Apps
+#sleep 30 && gpodder &
+#}}}
+
+# Load Shell non-login setup {{{
+# Source Bash setup if exists and not loaded already
+if [[ -n "$BASH" ]] && [[ -r "$HOME/.bashrc" ]] && [[ -z "$BASHRC" ]]; then
+    . $HOME/.bashrc
+fi
+#}}}
+
+# LOCAL aliases {{{
+[[ -f ~/.profile.local ]] && . ~/.profile.local
+#}}}
+
+# vim:fdm=marker:sw=4:ts=4

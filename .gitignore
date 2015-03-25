@@ -1,0 +1,13 @@
+#
+# gitignore main file
+#
+
+# Ignore Vundle plugins (this will be managed by Vundle itself instead of git)
+**/vim/bundle/
+**/vim/backup/
+
+# Ignore a folder (I don't want to track ALL config files)
+backup/
+
+# Ignore my SSH keys ;)
+ssh/

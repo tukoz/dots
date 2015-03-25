@@ -1,0 +1,69 @@
+! ~/.Xresources: Color Scheme Hybrid {{{
+
+! Hybrid Terminal Colours. Uses the palette from Tomorrow-Night:
+! https://gist.github.com/w0ng/3278077
+! https://github.com/chriskempson/tomorrow-theme/blob/master/vim/colors/Tomorrow-Night.vim
+
+!	Tip: 256 colors {{{2
+!	Due to the limited 256 palette, colours in Vim and gVim will still be slightly
+!	different. In order to get the same colours as gVim and use this colourscheme
+!	the way that it was intended, it is highly recommended that you:
+!	1.  Add these colours to ~/.Xresources:
+!         https://gist.github.com/3278077
+!	2.  Use Xresources colours by setting in ~/.vimrc:
+!	 	let g:hybrid_use_Xresources = 1
+!	 	colorscheme hybrid
+ 
+! Tomorrow-Night Palette {{{2
+#define t_background		#1d1f21
+#define t_foreground		#c5c8c6
+#define t_current_line	#282a2e
+#define t_selection			#373b41
+#define t_comment				#707880
+#define t_red						#cc6666
+#define t_orange				#de935f
+#define t_yellow				#f0c674
+#define t_green					#b5bd68
+#define t_aqua					#8abeb7
+#define t_blue					#81a2be
+#define t_purple				#b294bb
+
+! Colors {{{2
+*background: t_background
+*foreground: t_foreground
+
+! black
+*color0:		t_current_line
+*color8:		t_selection
+
+! red
+*color1:		#a54242
+*color9:		t_red
+
+! green
+*color2:		#8c9440
+*color10:		t_green
+
+! yellow
+*color3:		t_orange
+*color11:		t_yellow
+
+! blue
+*color4:		#5f819d
+*color12:		t_blue
+
+! magenta
+*color5:		#85678f
+*color13:		t_purple
+
+! cyan
+*color6:		#5e8d87
+*color14:		t_aqua
+
+! white
+*color7:		t_comment
+*color15:		t_foreground
+!}}}2
+!}}}
+
+! vim:fdm=marker

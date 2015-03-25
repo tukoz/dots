@@ -1,0 +1,16 @@
+[core]
+	excludesfile = ~/.git/ignore
+	editor = vim
+
+[merge]
+	tool = vimdiff
+
+[color]
+	ui = true
+	status = auto
+	branch = auto
+
+[user]
+	name = lliseil
+	email = opensource@lliseil.fr
+

@@ -1,0 +1,33 @@
+#
+# gitignore main file
+#
+
+# Test
+install.conf.yaml
+
+.svn
+.hg
+.*.swp
+
+# Take from github/gitignore
+# Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# Ignore Vundle plugins (this will be managed by Vundle itself instead of git)
+**/vim/bundle/
+
+# Ignore a folder (I don't want to track ALL config files)
+# "**/foo" matches file or directory "foo" anywhere
+**/backup/
+
+# Ignore my SSH keys ;)
+ssh/
+
+# Non-Unix OS
+.DS_Store
+Thumbs.db

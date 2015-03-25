@@ -1,0 +1,79 @@
+!~/.Xressources: Color Scheme Pnevma
+
+! tint with any color; i.e., blue, red, tomato4, olivedrab2, etc.
+!   some nice listings are at:
+!     http://www.nisrv.com/drupal/?q=node/11
+!     http://www.htmlgoodies.com/tutorials/colors/article.php/3478921
+!URxvt*tintColor: Blue
+
+! Pnevma Colors {{{2
+!URxvt*.foreground: #696969
+!URxvt*.background: #282626
+! background[]<COLOR> (where 0 = clear, 100 = opaque)
+!URxvt*.color: #363636
+!URxvt*.color8: #424242
+!URxvt*.color1: #C37561
+!URxvt*.color9: #D19485
+!URxvt*.color2: #A0A57E
+!URxvt*.color10: #B6B99D
+!URxvt*.color3: #D1A375
+!URxvt*.color11: #DEBC9C
+!
+! Folders colors: URxvt*color4, and color12
+!  Replace folder color (eg. blue) with a lighter shade (eg. RoyalBlue) for clarity.
+!URxvt*.color4: #7985A3
+!URxvt*.color12: #98A1B9
+!URxvt*.color5: #AB716D
+!URxvt*.color13: #BE918E
+!URxvt*.color6: #98B9B1
+!URxvt*.color14: #CBE6CB
+!URxvt*.color7: #D0D0D0
+!URxvt*.color15: #E6E6E6
+
+!(235, 248)
+URxvt*.background:  #262626
+URxvt*.foreground:  #A8A8A8
+
+!(134)
+URxvt*.cursorColor: #AF5FD7
+
+!(252)
+URxvt*.colorBD:     #D0D0D0
+URxvt*.colorIT:     #D0D0D0
+!URxvt*.colorUL:     #D0D0D0
+
+!BLK (236, 243)
+URxvt*.color0:      #303030
+URxvt*.color8:      #767676
+
+!WHT (252, 231)
+URxvt*.color7:      #D0D0D0
+URxvt*.color15:     #FFFFFF
+
+!RED
+URxvt*.color1:      #E16B6A
+URxvt*.color9:      #FFA3A3
+
+!GRN
+URxvt*.color2:      #48A16F
+URxvt*.color10:     #80D9A5
+
+!YEL
+URxvt*.color3:      #C0824F
+URxvt*.color11:     #F7B985
+
+!BLU
+URxvt*.color4:      #7B91C6
+URxvt*.color12:     #B0C7FC
+
+!MAG
+URxvt*.color5:      #DF679A
+URxvt*.color13:     #FF9FD4
+
+!CYN
+URxvt*.color6:      #4E9E9E
+URxvt*.color14:     #85D5D4
+
+!}}}
+
+! vim:fdm=marker

@@ -1,0 +1,19 @@
+!
+! ~/.Xresources: Xft Fonts
+!
+
+! - use xft for drawing fonts
+!  Xft (X FreeType) with Bitstream, DejaVu, Liberation, or Terminus fonts:
+!  Fedora/debian packages: libXft/libxft2
+!  An anti-aliased font setup with Xft looks fantastic; it can be a bit choppy on older systems.
+!  You can always turn off anti-aliasing (antialias=false) if  your terminal is sluggish.
+!  Use only ONE of the Xft pairs below:
+!
+! Xft settings
+Xft.dpi:				96
+Xft.antialias:	true
+Xft.rgba:				rgb
+Xft.hinting:		true
+Xft.hintstyle:	hintfull
+Xft.autohint:		true
+Xft.lcdfilter:	lcddefault

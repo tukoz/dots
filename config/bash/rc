@@ -1,0 +1,463 @@
+#
+# ~/.bashrc
+#
+# Bash interactive NON-LOGIN shell setup
+
+#  Notes  {{{
+# Inspiration: many, of which
+#  Arch's default - inameiname 'bash_ultimate' - github.com/rafi - github.com/EvanPurkhiser
+#
+# unset an export at anytime with eg: `unset export HISTCONTROL`
+# DOIN:
+#   minimal modular bashrc for any machine and user
+#   system set settings only if [[ -z /etc/bashrc ]]
+#   XDG: via ~/.profile and only if already set (avoid making le souk on distant (shared) hosts)
+#}}}
+
+# Profiling
+export BASHRC="1"
+export BASHRC_SOURCED="$BASHRC_SOURCED|$(date +%s)"
+export BASHRC_SOURCED_BY="$BASHRC_SOURCED_BY|$(ps -p $$ -o pid= -o ppid= -o comm= -o args= -o fuser=) $(date +%s)"
+
+#  Basic Setup {{{
+# ~~~~~~~~~~~~~~~~~~~
+
+#  Source global definitions
+# Is always executed on (shell) login [A,RH,D]
+# DOIN: other systems
+
+# Check if System-wide bash setting exist; if so use it (ie suppose it's sourced); if not, do what it does
+if [[ -z /etc/bashrc ]]; then
+	# If not running interactively, don't do anything [A,RH]
+	[[ $- != *i* ]] && return ||          # other syntax [ -z "$PS1" ] && return
+
+    # sanitize TERM: 	[A]
+    safe_term=${TERM//[^[:alnum:]]/?}
+    match_lhs=""
+fi
+#}}}
+
+#  Bash options {{{
+# ~~~~~~~~~~~~~~~~~~~
+shopt -s cdspell          # autocorrects cd misspellings
+shopt -s checkwinsize     # update the value of LINES and COLUMNS after each command if altered [A,RH]
+shopt -s expand_aliases   # expand aliases
+shopt -s dotglob          # include dotfiles in pathname expansion
+shopt -s extglob          # enable extended pattern-matching features
+shopt -s nocaseglob       # Case-insensitive globbing (used in pathname expansion)
+shopt -s autocd           # Autocd
+
+# history (XDG) {{{2
+shopt -s cmdhist            # Combine multiline commands into one in history
+shopt -s histreedit         # Add failed commands to the bash history
+shopt -s histappend         # Append each bash session's histories to $HISTFILE (for a user) instead of overwriting [A]
+shopt -s dotglob            # include dotfiles in pathname expansion
+export HISTSIZE=2000        #
+export HISTFILESIZE=50000   # save NN cmds
+# Use $XDG_CACHE_HOME/bash/history if $XDG_CACHE_HOME exists, otherwise ~/.bash_history
+if [[ -d "$XDG_CACHE_HOME" ]]; then
+   echo "1. we have $XDG_CACHE_HOME, using it for bash_history" && export HISTFILE="$XDG_CACHE_HOME/bash_history" && [[ -f ~/.bash_history ]] && mv ~/.bash_history ~/.cache/bash_history
+ else
+   echo "1. No \$XDG_CACHE_HOME, using ~/.bash_history" && export HISTFILE="$HOME/.bash_history"
+fi
+# Same, creating if not existing
+#[[ -d "$XDG_CACHE_HOME" ]] && echo "Has $XDG_CACHE_HOME, using it!"|| mkdir "$XDG_CACHE_HOME" && echo "No \$XDG_CACHE_HOME, create it!"
+export HISTCONTROL="ignoreboth:erasedups"   # dupes & spaces + no noise from mc
+export HISTIGNORE="&:ls:[bf]g:exit"         # That way, if I know that I've done something
+                                            # before but can't remember the specifics,
+                                            # a quick history | grep foo will help jog my memory
+export HISTTIMEFORMAT="%F %H:%M "           # HISTTIMEFORMAT takes format string of strftime
+
+## Completion {{{2
+# enable programmable completion features (you don't need to enable this if
+# it's already enabled in /etc/bashrc or /etc/profile and they are sourced). [A]
+#if [[ -f /etc/bash_completion ]] && ! shopt -oq posix; then
+#    . /etc/bash_completion
+#fi
+complete -cf sudo           			# completion with sudo
+
+## Git Prompt Helpers
+#GIT_PS1_SHOWDIRTYSTATE=1
+#GIT_PS1_SHOWSTASHSTATE=1
+#GIT_PS1_SHOWUNTRACKEDFILES=1
+#GIT_PS1_SHOWUPSTREAM="auto"
+source /usr/share/git/completion/git-prompt.sh
+source /usr/share/git/completion/git-completion.bash
+
+# autocomplete ssh commands
+#complete -W "$(echo `cat ~/.bash_history | egrep '^ssh ' | sort | uniq | sed 's/^ssh //'`;)" ssh
+
+# More Completion
+#ENABLE_BASH_COMPLETION=1               # enable bash completion
+#COMP_CVS_REMOTE=                       # enable remote cvs completion
+#COMP_SCP_REMOTE=                       # enable remote scp completion
+#COMP_CONFIGURE_HINTS=                  # enable configure arguments completion
+#COMP_TAR_INTERNAL_PATHS=               # enable tar archive internal path completion
+#COMP_IWCONFIG_SCAN=                    # enable wireless uid completion
+#COMP_RPM_DATABASE=                     # enable installed packages completion
+
+#}}}2
+#}}}
+
+#  Variables (XDG) {{{
+# ~~~~~~~~~~~~~~~~~~~
+
+# Set User's Shell agnostic environment (XDG) if exists and not already sourced
+# (poor man's hack when ~/.*profile's not read by the wm after GUI login)
+[[ -z "$PROFILE" && -d "$HOME/.profile" ]] && source $HOME/.profile
+
+# TERM: set it to the used TERM, and check that `infocmp` returns smthg
+#export TERM="xterm-256color"
+#export TERM="xterm-xfree86"
+#export TERM="linux"
+#export TERM="rxvt-unicode"
+export TERM="rxvt-unicode-256color"
+
+export PAGER="less"
+export LESS_TERMCAP_md="${yellow}" # Highlight section titles in manual pages.
+alias less="less -X"            # prevent less from clearing the screen upon exit
+alias sudo="sudo "				# Carry over aliases to the root account when using sudo
+alias cp="cp -i"                # to prevent is safer than to cure
+alias mv="mv -i"
+# Colors and  TERM: see 'colorfull PS1' below
+
+export VARIABLES="1"
+
+#}}}
+
+#  Visual Stuff {{{
+# ~~~~~~~~~~~~~~~~~~~
+
+# Window Title {{{2
+case ${TERM} in
+    xterm*|rxvt*|Eterm|aterm|kterm|gnome*)
+        PROMPT_COMMAND=${PROMPT_COMMAND:+$PROMPT_COMMAND; }'printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"'
+        ;;
+    screen)
+        PROMPT_COMMAND=${PROMPT_COMMAND:+$PROMPT_COMMAND; }'printf "\033_%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"'
+        ;;
+esac
+
+# Set colorful only on colorful terminals ---------- {{{2
+# Instead of using /etc/DIR_COLORS, try to use the (XDG) user dircolors file
+# first to take advantage of user additions. Use internal bash
+# globbing instead of external grep binary.
+
+[[ -f "$XDG_CONFIG_HOME/bash/dircolors" ]] && match_lhs="${match_lhs}$(<$XDG_CONFIG_HOME/bash/dircolors)"
+[[ -f ~/.dircolors ]] && match_lhs="${match_lhs}$(<~/.dircolors)"
+[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
+[[ -z "${match_lhs}" ]] \
+&& type -P dircolors >/dev/null \
+&& match_lhs=$(dircolors --print-database)
+
+if [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] ; then
+
+	# we have colors :-)
+	# Enable colors for ls, etc, prefering user's dircolors 	[A]
+	if type -P dircolors >/dev/null ; then
+        if [[ -f "$XDG_HOME_CONFIG/bash/dircolors" ]] ; then
+            echo "2.1 usin user's dircolors (XDG)"
+            eval $(dircolors -b "$XDG_HOME_CONFIG/bash/dircolors")
+        elif [[ -f ~/.dircolors ]] ; then
+            echo "2.1' usin user's dircolors"
+            eval $(dircolors -b ~/.dircolors)
+        elif [[ -f /etc/DIR_COLORS ]] ; then
+            echo "2.2 usin system's dircolors"
+            eval $(dircolors -b /etc/DIR_COLORS)
+        fi
+	fi
+
+	# Color Pompt {{{3
+
+    # Use Bashline if exists
+    #if [[ -d "~/.dotfiles/bash/bashline" ]]; then
+    #  . ~/.dotfiles/bash/bashline/bashline.sh
+    #else
+      #PS1="My prompt (full colors) >"
+
+      # Kiss
+      #PS1="[\u@\h:\w]\$ "
+
+	  # Standard:
+      #PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\$\[\033[00m\] "
+
+      # Use this PS1 string if you want \W for root and \w for all other users:
+      #PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h\[\033[01;34m\] \W'; else echo '\[\033[01;32m\]\u@\h\[\033[01;34m\] \w'; fi) \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\$\[\033[00m\] "
+
+      # with numerical error (number)   https://wiki.archlinux.org/index.php/Color_Bash_Prompt_(简体中文)
+      #PS1="\n\[\033[1;37m\]\342\224\214($( \
+#if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;34m\]\u@\h'; fi \
+#)\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\$?\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\@ \d\[\033[1;37m\])\[\033[1;37m\]\n\342\224\224\342\224\200(\[\033[1;32m\]\w\[\033[1;37m\])\342\224\200(\[\033[1;32m\]\$(ls -1 | wc -l | sed 's: ::g') files, \$(ls -lah | grep -m 1 total | sed 's/total //')b\[\033[1;37m\])\342\224\200> \[\033[0m\]"
+
+      # with Unicode variation with success and error symbols  https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
+      # (!) causes error on web4all
+      #PS1="\[\033[0;37m\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && echo \"[\[\033[0;31m\]\342\234\227\[\033[0;37m\]]\342\224\200\")[$(if [[ ${EUID} == 0 ]]; then echo '\[\033[0;31m\]\h'; else echo '\[\033[0;33m\]\u\[\033[0;37m\]@\[\033[0;96m\]\h'; fi)\[\033[0;2 37m\]]\342\224\200[\[\033[0;32m\]\w\[\033[0;37m\]]\n\[\033[0;37m\]\342\224\224\342\224\200\342\224\200\342\225\274 \[\033[0m\]"
+
+      # Show the git branch in your bash prompt
+      # '__git_ps1' is an empty string if you’re not in a git directory
+      PS1="\n\[\033[1;37m\]\342\224\214($( \
+if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;34m\]\u@\h'; fi \
+)\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\$?\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\@ \d\[\033[1;37m\])\[\033[1;37m\]\n\342\224\224\342\224\200(\[\033[1;32m\]\w\[\033[1;37m\])\342\224\200$(__git_ps1) \
+(\[\033[1;32m\]\$(ls -1 | wc -l | sed 's: ::g') files, \$(ls -lah | grep -m 1 total | sed 's/total //')b\[\033[1;37m\])\342\224\200> \[\033[0m\]"
+    #fi
+
+	# color dependant stuff here {{{3
+    # Sorties en couleurs pour ls & grep si le terminal le supporte (urxvt, xterm, and aterm) :
+    #if [ "$TERM" != "dumb" ]; then
+        alias dir="dir --color=auto"
+        alias grep='grep --color'
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # Use GNU ls on OSX
+            alias ls='LC_COLLATE=C gls --color=auto --group-directories-first'
+        else
+            alias ls='LC_COLLATE=C ls -h -p --color=auto --group-directories-first'
+        fi
+        alias lsl='ls -GF'                              # (-G, --no-group) add signs to show directories and else :)
+        alias la='ls -a'
+        alias ll='ls -l -G -h -p'
+        alias lh='ll -h'
+        alias lsa='ls --all --classify'
+        alias lssh='ls -Ssh --color=always --classify'  # classement par taille croissant
+        alias lsd="ls -alF | grep /$"                   # Show clearly only directories
+    #fi
+
+else
+	# Dumb prompt {{{3
+	PS1="My prompt (no colors) >"
+    #PS1="[\u@\h:\w]\$ "
+
+	# show 'root@' when we do not have colors
+
+	#PS1="\u@\h \w \$([[ \$? != 0 ]] && echo \":( \")\$ "
+
+	# Use this other PS1 string if you want \W for root and \w for all other users:
+	#PS1="\u@\h $(if [[ ${EUID} == 0 ]]; then echo '\W'; else echo '\w'; fi) \$([[ \$? != 0 ]] && echo \":( \")\$ " || { echo 'Could not load PS1 (dumb colors)'&>2; exit 1;
+	#}
+	#}}}3
+fi
+
+PS2="> "
+PS3="> "
+PS4="+ "
+
+# add ranger level (nesting depth) to the promt
+[[ -n "$RANGER_LEVEL" ]] && PS1="$PS1"'[$RANGER_LEVEL]'
+
+# number of jobs in the background
+PS1="$PS1"'[\j]\$ '
+#}}}2
+#}}}
+
+###  Aliases {{{
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+# http://serverfault.com/questions/3743/what-useful-things-can-one-add-to-ones-bashrc
+
+##  Files and Directories Commands {{{2
+
+# Navigation {{{3
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
+alias sdcv='rlwrap sdcv'        # sdcv with rlwrap is great (u get history with the up and down arrows)
+
+# Size {{{3
+alias duGrosFichiers="du -am | sort -n -r |more"    # Sort dirs and files starting from the biggests; p
+alias duGrosFichiers10="du -max /home/kozaki/ | sort -nr | head -10"  # Sorts out 10 biggest files and dirs starting from the biggests; p
+alias duGrosFichiers3="du -S | sort -n -r |more"    # Sorts dirs not counting subdirs
+alias duMaxdepth1='du --max-depth=1 -m'     # affiche taille réps.
+alias duMaxdepth2='du --max-depth=2 -m'     # affiche taille réps. sur 2 nivos
+#alias duGrosRep='du -Sm | sort -n'
+alias duGrosRep='du -xks $i | sort -rn'     #
+alias whichta='type -all'
+alias cowert='cower -t ~/tmp'
+alias mountt='mount | column -t'
+
+# Find the size of each of my disks:
+function fawk {
+    first="awk '{print "
+    last="}'"
+    cmd="${first}\$${1}${last}"
+    eval $cmd
+}   # (now run 'df -h|fawk 2' which saves a good bit of typing)
+
+# Copy, Move and Go to <create-if-does-not-exist> dir {{{3
+alias cp='cp -i'                        # dde confirmation si fichier même nom
+
+# Creates a new directory and moves or copy the file or cd into it, in 1 step
+# Usage: mkmv <file> <directory>
+mkmv() {
+    mkdir -p "$2"
+    mv "$1" "$2"
+}
+mkcp() {
+    mkdir -p "$2"
+    cp "$1" "$2"
+}
+mkcd() {
+    dir="$*";
+    mkdir -p "$dir" && cd "$dir";
+}
+
+# Archives {{{3
+extract () {
+    if [[ -f $1 ]] ; then
+    case $1 in
+        *.tar.bz2) tar xjf $1 ;;
+        *.tar.gz) tar xzf $1 ;;
+        *.bz2) bunzip2 $1 ;;
+        *.gz) gunzip $1 ;;
+        *.tar) tar xf $1 ;;
+        *.tbz2) tar xjf $1 ;;
+        *.tgz) tar xzf $1 ;;
+        *.dmg) hdiutil mount $1 ;;    # needs 'dmg2img'?
+        *.rar) rar x $1 ;;
+        *.zip) unzip $1 ;;
+        *.ZIP) unzip $1 ;;
+        *.Z) uncompress $1 ;;
+        *) echo "'$1' cannot be extracted via extract()" ;;
+    esac
+    else
+	  echo "'$1' is not a valid file"
+    fi
+}
+alias zipall='for D in *; do zip -r "$D" "$D"; done'
+
+# ACL {{{3
+# sanitize - set file/directory owner and permissions to default values (644/755)
+# http://blog.padowi.se/2010/06/03/easy-permission-sanitizing-using-chmod/
+# The X parameter is defined in the chmod man-file as: “execute/search only if
+# the file is a directory or already has execute permission for some user”.
+# So, directories automatically receives the executable flag, and any file which
+# already has it, maintains it. Bloody brilliant!
+# Usage: sanitize <file>
+sanitize() {
+    chmod -R u=rwX,go=rX "$@"
+    chown -R ${USER}.users "$@"
+}
+# Check and change permissions if needed (eg for group collaboration) see: autochown
+#}}}3
+#}}}2
+##  Search {{{2
+# Find in ASCII files only
+function findTextInAsciiFiles {
+  # usage: findTextInAsciiFiles DIRECTORY NEEDLE_TEXT
+    # cut out mime informations
+    # http://stackoverflow.com/questions/4767396/linux-command-how-to-find-only-text-files
+    find "$1" -type f -exec grep -l "$2" {} \; -exec file {} \; | grep text | cut -d ':' -f1
+}
+#}}}2
+
+### Shell agnostic aliases setup
+##  MM stuff               {{{2
+
+# GUI Aliases
+if [[ -n "$DESKTOP_STARTUP_ID" ]]; then
+  # Images
+  alias screenshot_window_date_png='gm import root ~/$(date "+%Y%m%d-%H%M%S").png && mpg123 /mnt/mm/audio/_SONS/courts/photo-slr-camera-shutter-sound'
+  alias screenshot_window_date_jpg='gm import root ~/$(date "+%Y%m%d-%H%M%S").jpg && mpg123 /mnt/mm/audio/_SONS/courts/photo-minolta-xd5-camera-shot-1'
+  alias screenshot_date_png='gm import root ~/$(date "+%Y%m%d-%H%M%S").png && mpg123 /mnt/mm/audio/_SONS/courts/photo-various-camera-shutters-and-motors-for-layering-2'
+  alias feh_browser='feh -g 640x480 -d -S filename '  # add /path/to/directory
+  alias feh_browser_fs='$MYSCRIPTS/apps/mm/feh_browser.sh %f -F -Z -q'
+
+  # Audio / Video
+
+  #alias bmpx='dbus-launch beep-media-player-2'
+fi
+
+# Transformer n'importe quel flux audio en wav
+mplayer_to_wav_pcm(){
+   mplayer -nocache "${1}" -vc null -vo null -ao pcm:file="${2}.wav"
+}
+   # utilisation ---> mplayer_pcm [file_in] [file_out] :
+   # [AO PCM] Info: To write WAVE files use -ao pcm:waveheader (default) ??
+   # -af resample=44100:0:2 si fichier depart a un autre sample (pour audacity et Kino)
+
+# Affichage infos détaillés tout fichier/flux audio/vidéo :
+mplayer_identify(){
+    mplayer -identify -frames 0 -ao null -vo null -vc dummy "$@" 2>/dev/null | grep ID_
+}
+# Correction des vidéos ayant index deffectueux :
+mencoder_correct_index(){
+    mencoder -forceidx -oac copy -ovc copy -o "${2}" "${1}"
+}
+
+##  Network {{{2
+
+# Apps
+alias bbc='lynx -term=vt100 http://news.bbc.co.uk/text_only.stm'    # les dernières news en console
+alias chromium='chromium --disk-cache-size=0'
+
+## Show Network Connections {{{3
+# Might get more system level network infos with SUDO
+alias network.connections='lsof -l -i +L -R -V'
+alias network.established='lsof -l -i +L -R -V | grep ESTABLISHED'
+alias network.internalip="ifconfig en0 | egrep -o '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'"
+alias network.externalip='curl -s http://checkip.dyndns.org/ | sed "s/[a-zA-Z<>/ :]//g"'
+alias network.ns='netstat -alnp --protocol=inet | grep -v CLOSE_WAIT | cut c-6,21-94 | tail +2' # À corriger
+alias openports='netstat -nape --inet'  # voir aussi fonction 'openports2' + bas
+openports2(){
+    echo "Open Ports:"; netstat -anp | grep LISTEN | grep tcp | awk  '{print $4, "\t", $7}' | less
+}
+
+## SSH commands {{{3
+#alias faster-ssh='ssh -C4c arcfour,blowfish-cbc'       # bypasses IPv6 lookup & use faster, insecure encryption
+alias scpppa='rsync -P --append'                        # resume/restart transfert over ssh, even one started with another tool ( -P = “--partial --progress” )
+#alias HOST='ssh HOSTNAME -l USERNAME -p PORT'
+# Better use `~/bin/ssh-to` , `ln -s ssh-to HOST` and ~/.ssh/config
+
+##  Display {{{2
+# Changement de résolution instantanné (requiert Xrandr):
+alias my_xrandr_resolutionreset800='xrandr --size 800x600'
+alias my_xrandr_resolutionreset1280='xrandr --size 1280x1024'
+alias my_xrandr_resolutionreset1600='xrandr --size 1600x1200'
+
+##  Divers {{{2
+
+# Add Trash to mc (!) causes issue
+#alias mc='LD_PRELOAD=/usr/lib/libtrash.so.3.3 mc'
+
+# Redirect the output of the X session to a file:
+# http://makarevitch.org/rant/bufchint.html
+#alias startx='startx &> ~/.xlog'
+#alias x='{ startx -- -dpi 100 -nolisten tcp >/dev/null & } ; clear ; sleep 2 ; sudo ionice -c2 -n1 -p `pgrep xinit -u $USER` ; logout'  # http://makarevitch.org/rant/bufchint.html
+alias xterm='xterm -bc &'
+
+# Do a Matrix movie effect of falling characters
+function matrix1() {
+    echo -e "\e[1;40m" ; clear ; while :; do echo $LINES $COLUMNS $(( $RANDOM % $COLUMNS)) $(( $RANDOM % 72 )) ;sleep 0.05; done|gawk '{ letters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()"; c=$4; letter=substr(letters,c,1);a[$3]=0;for (x in a) {o=a[x];a[x]=a[x]+1; printf "\033[%s;%sH\033[2;32m%s",o,x,letter; printf "\033[%s;%sH\033[1;37m%s\033[0;0H",a[x],x,letter;if (a[x] >= $1) { a[x]=0; } }}'
+}
+#function matrix2() {
+#     echo -e "\e[1;40m" ; clear ; characters=$( jot -c 94 33 | tr -d '\n' ) ; while :; do echo $LINES $COLUMNS $(( $RANDOM % $COLUMNS)) $(( $RANDOM % 72 )) $characters ;sleep 0.05; done|gawk '{ letters=$5; c=$4; letter=substr(letters,c,1);a[$3]=0;for (x in a) {o=a[x];a[x]=a[x]+1; printf "\033[%s;%sH\033[2;32m%s",o,x,letter; printf "\033[%s;%sH\033[1;37m%s\033[0;0H",a[x],x,letter;if (a[x] >= $1) { a[x]=0; } }}'
+#}
+#function matrix3() {
+#     echo -e "\e[1;40m" ; clear ; while :; do echo $LINES $COLUMNS $(( $RANDOM % $COLUMNS)) $( printf "\U$(( $RANDOM % 500 ))" ) ;sleep 0.05; done|gawk '{c=$4; letter=$4;a[$3]=0;for (x in a) {o=a[x];a[x]=a[x]+1; printf "\033[%s;%sH\033[2;32m%s",o,x,letter; printf "\033[%s;%sH\033[1;37m%s\033[0;0H",a[x],x,letter;if (a[x] >= $1) { a[x]=0; } }}'
+#}
+
+###  Other Commands
+
+#}}}
+
+# Source User's Specific Settings if they exist {{{
+
+if [[ -d $XDG_CONFIG_HOME/bash ]]; then
+    echo "3. loading local bash settings (XDG)"
+    if [[ -d $XDG_CONFIG_HOME/bash/local ]]; then
+      for l in $XDG_CONFIG_HOME/bash/local/*; do source "$l" ; done
+    fi
+elif [[ -n `ls $HOME/.bash*.local` ]]; then
+    echo "3. loading local bash settings"
+    for l in `ls $HOME/.bash*.local`; do source "$l"; done
+  else
+    echo "3. No local bash settings found."
+fi
+# }}}
+
+# Refs {{{
+# ~~~~~~~~~~~~~~~~~~~
+# [A] Arch's system default
+# [RH] Red Hat system default
+# }}}
+
+# vim:fdm=marker:ts=4

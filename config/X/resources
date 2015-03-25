@@ -1,0 +1,18 @@
+! ~/.Xressources: Modular
+!
+! Inspiration
+! http://postblue.info/netbook-archlinux-i3-optimisation/
+
+!		Color Scheme
+#include "colors.tomorrownight"
+!#include "colors.solarized.rc"
+!#include "colors.tomorrownight.rc"
+
+!		Xft Fonts
+!#include "xft.rc"
+
+!		URxvt
+#include "urxvt.rc"
+
+!		Xterm
+!#include "xterm.rc"
