@@ -1,6 +1,6 @@
 " Vim config: 	kozaki's Vimrc {{{
 " Author: 		kozaki <kozaki[at]lliseil.fr>
-" Update: 		2015-03-19
+" Update: 		2015-03-25
 " Sources/Inspiration:
 "  Excellent http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim#2559262
 "  https://wiki.archlinux.org/index.php/Vim#Example_configurations
@@ -9,13 +9,15 @@
 "
 " DONE: thématisé ; +Vundle ; + XDG - 2015-01-09
 " DOIN:
-" Gracefully degrading vimrc  http://blog.sanctum.geek.nz/gracefully-degrading-vimrc/
-" XDG:
-" XDG compatibility: https://tlvince.com/vim-respect-xdg
-" rafi's modular Vim config (lliseil)
-" Workflow:
-" 	How to boost your Vim productivity http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-"	plugins 'TODO'
+"   Gracefully degrading vimrc  http://blog.sanctum.geek.nz/gracefully-degrading-vimrc/
+"   XDG:
+"       XDG compatibility: https://tlvince.com/vim-respect-xdg
+"   rafi's modular Vim config (lliseil)
+"   Workflow:
+" 	    How to boost your Vim productivity http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+"	    plugins 'TODO'
+"   clipboard setting
+"   re-check ben O'hara settings (patabash)
 "}}}
 
 " 1.CORE options {{{
@@ -151,6 +153,7 @@ endif
 "}}}
 
 " Editor settings				{{{
+set errorbells                  " errors trigger bell
 set lazyredraw					" no redraws in macros
 set confirm						" get a dialog when :q, :w, or :wq fails
 set nobackup					" no backup~ files, use undo
@@ -186,7 +189,7 @@ set ffs=unix,dos,mac					" Use Unix as the standard file type
 "set fileformat=unix					" file mode is unix
 "set fileformats=unix,dos    	" only detect unix file format, displays that ^M with dos files
 set wildignore=*.o,*~,*.pyc 	" Ignore compiled files
-"}}}
+"}}}2
 "}}}
 
 " Display settings {{{
