@@ -1,5 +1,9 @@
 # kozaki ~/.inputrc config
-#
+
+# This file controls the behaviour of line input editing for
+# programs that use the GNU Readline library. Existing
+# programs include FTP, Bash, and GDB.
+
 # inspiration:
 # https://github.com/tejr/dotfiles
 # http://ss64.com/bash/syntax-inputrc.html
@@ -29,8 +33,8 @@ set completion-map-case On
 # Treat dots when autocompleting (Readline)
 set match-hidden-files on
 
-# Show me up to 5,000 completion items, don't be shy
-set completion-query-items 5000
+# If >500 completion items, ask user if he wants to see all completions
+set completion-query-items 500
 
 # Flip through autocompletion matches with <Shift>-<Tab>.
 "\e[Z": menu-complete
@@ -61,9 +65,40 @@ set visible-stats on
 
 #}}}
 
-# vi mode									{{{
+## emacs / vi modes {{{
+
+## Set various bindings for emacs mode {{{2
+##set editing-mode emacs
+$if mode=emacs
+
+##  Key Bindings
+# for linux console and RH/Debian xterm
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[7~": beginning-of-line
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# for rxvt
+"\e[8~": end-of-line
+
+# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+$endif
+
+# vi mode						{{{2
 #set editing-mode vi
 
+#}}}2
 #}}}
 
 # vim:fdm=marker

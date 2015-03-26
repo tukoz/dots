@@ -10,6 +10,7 @@
 # unset an export at anytime with eg: `unset export HISTCONTROL`
 # DOIN:
 #   minimal modular bashrc for any machine and user
+# DONE:
 #   system set settings only if [[ -z /etc/bashrc ]]
 #   XDG: via ~/.profile and only if already set (avoid making le souk on distant (shared) hosts)
 #}}}
@@ -111,9 +112,9 @@ source /usr/share/git/completion/git-completion.bash
 # TERM: set it to the used TERM, and check that `infocmp` returns smthg
 #export TERM="xterm-256color"
 #export TERM="xterm-xfree86"
-#export TERM="linux"
+export TERM="linux"
 #export TERM="rxvt-unicode"
-export TERM="rxvt-unicode-256color"
+#export TERM="rxvt-unicode-256color"
 
 export PAGER="less"
 export LESS_TERMCAP_md="${yellow}" # Highlight section titles in manual pages.
@@ -439,6 +440,7 @@ function matrix1() {
 
 ###  Other Commands
 
+#}}}2
 #}}}
 
 # Source User's Specific Settings if they exist {{{
@@ -451,8 +453,11 @@ if [[ -d $XDG_CONFIG_HOME/bash ]]; then
 elif [[ -n `ls $HOME/.bash*.local` ]]; then
     echo "3. loading local bash settings"
     for l in `ls $HOME/.bash*.local`; do source "$l"; done
+elif [[ -n `ls $HOME/.bash_aliases` ]]; then
+    echo "3. loading local bash aliases"
+    for l in `ls $HOME/.bash_aliases`; do source "$l"; done
   else
-    echo "3. No local bash settings found."
+    echo "3. No local bash settings/aliases found."
 fi
 # }}}
 
