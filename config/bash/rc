@@ -5,7 +5,7 @@
 
 #  Notes  {{{
 # Inspiration: many, of which
-#  Arch's default - inameiname 'bash_ultimate' - github.com/rafi - github.com/EvanPurkhiser
+#  Arch's default - https://github.com/woegjiub - github.com/rafi - github.com/EvanPurkhiser - inameiname 'bash_ultimate'
 #
 # unset an export at anytime with eg: `unset export HISTCONTROL`
 # DOIN:
@@ -222,6 +222,13 @@ if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;34m\]
         alias lsa='ls --all --classify'
         alias lssh='ls -Ssh --color=always --classify'  # classement par taille croissant
         alias lsd="ls -alF | grep /$"                   # Show clearly only directories
+        export LESS_TERMCAP_mb=$(printf "\e[1;31m")     # DOIN: shell agnostic setup
+        export LESS_TERMCAP_md=$(printf "\e[1;31m")
+        export LESS_TERMCAP_me=$(printf "\e[0m")
+        export LESS_TERMCAP_se=$(printf "\e[0m")
+        export LESS_TERMCAP_so=$(printf "\e[1;44;33m")
+        export LESS_TERMCAP_ue=$(printf "\e[0m")
+        export LESS_TERMCAP_us=$(printf "\e[1;32m")
     #fi
 
 else

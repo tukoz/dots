@@ -18,8 +18,10 @@ Session.vim
 .netrwhist
 *~
 
-# Ignore Vundle plugins (this will be managed by Vundle itself instead of git)
+# Ignore eg Vundle plugins (this will be managed by Vundle itself instead of git)
 **/vim/bundle/
+**/vim/spell/
+**/vim/view/
 
 # Ignore a folder (I don't want to track ALL config files)
 # "**/foo" matches file or directory "foo" anywhere

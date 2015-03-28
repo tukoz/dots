@@ -12,10 +12,10 @@
 "   Gracefully degrading vimrc  http://blog.sanctum.geek.nz/gracefully-degrading-vimrc/
 "   XDG:
 "       XDG compatibility: https://tlvince.com/vim-respect-xdg
-"   rafi's modular Vim config (lliseil)
+"				rafi's modular Vim config (lliseil)
 "   Workflow:
 " 	    How to boost your Vim productivity http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-"	    plugins 'TODO'
+"				plugins 'TODO'
 "   clipboard setting
 "   re-check ben O'hara settings (patabash)
 "}}}
@@ -25,7 +25,6 @@
 if &compatible              " only if not set before
   set nocompatible          " use vim-defaults instead of vi-defaults (Vundle required)
 endif
-"}}}
 " 1.1.Environment {{{2
 " Respect XDG if it is set and vimdir exists (create Vim dirs)
 if isdirectory($XDG_CONFIG_HOME.'/vim')
@@ -62,39 +61,35 @@ else
 	endif
 endif
 
-"DOIN: set spellfile=$XDG_CONFIG_HOME/vim/spell/fr.utf-8.spl
-"au BufWinLeave *.* mkview
-"au BufWinEnter *.* silent loadview
-"}}}
 " Vundle & plugins {{{2
-" documentation at https://github.com/gmarik/vundle#readme
+" documentation at https://github.com/gmarik/Vundle.vim#readme
 
 " Install vundle if not already installed {{{3
 if has("user_commands")
 	" Setting up Vundle - the vim plugin bundler
 	let VundleInstalled=0
-	let vundle_readme=expand('$VIMPATH/bundle/vundle/README.md')
+	let vundle_readme=expand('$VIMPATH/bundle/Vundle.vim/README.md')
 	if !filereadable(vundle_readme)
 		echo "Installing Vundle.."
 		echo ""
 		silent !mkdir -p $VIMPATH/bundle
-		silent !git clone https://github.com/gmarik/vundle.git $VIMPATH/bundle/vundle
+		silent !git clone https://github.com/gmarik/Vundle.git $VIMPATH/bundle/Vundle.vim
 		let VundleInstalled=1
 	endif
 	"}}}3
 
 	" Set the runtime path to include Vundle and initialize
-	"set rtp+=$VARPATH/bundle/vundle
-	"runtime autoload/vundle.vim " apparently without this the exists() check fails
+	"set rtp+=$VARPATH/bundle/Vundle.vim
+	"runtime autoload/Vundle.vim " apparently without this the exists() check fails
 	"call vundle#begin(expand('$VARPATH)'.'/bundle')
-	set rtp+=$VIMPATH/bundle/vundle
+	set rtp+=$VIMPATH/bundle/Vundle.vim
 	call vundle#begin(expand('$VIMPATH').'/bundle')
 endif
 if exists("*vundle#rc")
 	" let Vundle manage Vundle, required
-	filetype off															" Vundle required
-	" if vundle is missing, bootstrap it with
-	"   git clone https://github.com/gmarik/vundle.git <PATH-TO>/vim/bundle/vundle
+	filetype off							" Vundle required
+	" if vundle is still missing, bootstrap it with
+	"   git clone https://github.com/gmarik/Vundle.vim.git <PATH-TO>/vim/bundle/Vundle.vim
 	Plugin 'gmarik/Vundle.vim'
 
 	" Plugins:
@@ -108,41 +103,56 @@ if exists("*vundle#rc")
 	" bundles are kept in <VIMPATH (or VARPATH) /vim/bundle/
 
 	" Navigation:
-	Plugin 'vim-scripts/mru.vim'			" manage Most Recently Used (MRU) files; TODO: see ctrlp.vim: Fuzzy file, buffer, mru, tag, etc finder.
-	"Plugin 'fholgado/minibufexpl.vim'		" Elegant buffer explorer - takes very little screen space
-	"Plugin 'edsono/vim-matchit'			" Configure % to match more than just single characters for HTML, LateX, and many other languages. included in the standard vim distribution since v 6.0.
-	Plugin 'majutsushi/tagbar'				" browse the tags of the current file and get an overview of its structure
-	Plugin 'sjl/gundo'
-	" Notes:
-	Plugin 'Rykka/riv.vim'					" Taking notes with reStructuredText:
+	Plugin 'vim-scripts/mru.vim'				" manage Most Recently Used (MRU) files; TODO: see ctrlp.vim: Fuzzy file, buffer, mru, tag, etc finder.
+	"Plugin 'fholgado/minibufexpl.vim'			" Elegant buffer explorer - takes very little screen space
+	"Plugin 'edsono/vim-matchit'				" Configure % to match more than just single characters for HTML, LateX, and many other languages. included in the standard vim distribution since v 6.0.
+	Plugin 'majutsushi/tagbar'					" browse the tags of the current file and get an overview of its structure
+	Plugin 'sjl/gundo.vim'						" Use the hidden power of Vim's undo tree		
+	" Notes Taking:
+	Plugin 'Rykka/riv.vim'						" Taking notes with reStructuredText:
 	Plugin 'Rykka/rhythm.css'
-	Plugin 'Rykka/InstantRst'
+	Plugin 'Rykka/InstantRst'					" preview rst document instantly.
+	Plugin 'tpope/vim-characterize'				" Expand vim Unicode character metadata to Emoji, HTML, Unicode names (on top of default' decimal, octal, and hex)
 	" Markdown:
-	Plugin 'godlygeek/tabular'				" vim script for text filtering and alignment
-	Plugin 'plasticboy/vim-markdown'	" Markdown syntax highlighting, matching rules and mappings
-	Plugin 'suan/vim-instant-markdown'	" instant Markdown previews from Vim + a browser
+	Plugin 'godlygeek/tabular'					" vim script for text filtering and alignment
+	Plugin 'plasticboy/vim-markdown'			" Markdown syntax highlighting, matching rules and mappings
+	Plugin 'suan/vim-instant-markdown'			" instant Markdown previews from Vim + a browser
 	" Visual Helpers:
-	Plugin 'bling/vim-airline'				" lean and mean status/tabline for vim that's lights as air
+	Plugin 'bling/vim-airline'					" lean and mean status/tabline for vim that's lights as air
 	" Coding:
-	Plugin 'Chiel92/vim-autoformat'		" easy code formatiing in Vim
-	Plugin 'closetag.vim'							" functions and mappings to close open HTML/XML tags
-	Plugin 'scrooloose/syntastic'			" Code syntax checking hacks for Vim
-	" Automation:
-	"Plugin 'Smart-Tabs'							" use tabs for indent (beg. of lines), spaces for alignment
-	" intelligent completion
-	Plugin 'ervandew/supertab'				" use <Tab> for all ur insert completions needs
-	" Evaluating SnipMate replacement -- YouCompleteMe breaks SnipMate
-	"Plugin 'sirver/ultisnips'				" powerful snippets engine
-	"Plugin 'honza/vim-snippets'			" snippets (to use with ultisnips)
-	"Plugin 'Valloric/YouCompleteMe'	" as-u-type, fuzzy-search code completion engine for Vim.
+	Plugin 'Chiel92/vim-autoformat'				" easy code formatiing in Vim
+	Plugin 'scrooloose/syntastic'				" Code syntax checking hacks for Vim
+	Plugin 'closetag.vim'						" functions and mappings to close open HTML/XML tags
+	Plugin 'ap/vim-css-color'					" Preview colors in source while editing css (hexa, rgb; Less, Sass)
+	Plugin 'groenewege/vim-less'				" Vim syntax for Less (dynamic CSS)
+	Plugin 'othree/html5.vim'					" HTML5 + inline SVG omnicomplete function, indent and syntax for Vim.
+	Plugin 'pangloss/vim-javascript'			" Improved syntax and indent plugins v >=7.4 with patches 1-7.
+	Plugin 'leshill/vim-json'					" json syntax highlighting
+	"Plugin 'StanAngeloff/php.vim'				" Up to date PHP syntax (5.3-5.6 support)
+	"Plugin 'taglist.vim'						" overview of the source code's structure, allows you to efficiently browse through source code files for many languages.
+	" Typing Efficiency Improvers_Automation:
+	Plugin 'tpope/vim-surround'					" Change the Surroundings of Text
+	Plugin 'tpope/vim-commentary'				" Quicker Commenting/Uncommenting
+	Plugin 'tpope/vim-repeat'					" Add repeat . to addons and unrepeatable vanilla commands
+	"Plugin 'Smart-Tabs'						" use tabs for indent (beg. of lines), spaces for alignment
+		" Completion:
+		"Plugin 'marijnh/tern_for_vim'			" Javascript
+		Plugin 'ervandew/supertab'				" use <Tab> for all ur insert completions needs
+		" DOIN Evaluating SnipMate replacement -- YouCompleteMe breaks SnipMate
+		"Plugin 'sirver/ultisnips'				" powerful snippets engine
+		"Plugin 'honza/vim-snippets'			" snippets (to use with ultisnips)
+		"Plugin 'Valloric/YouCompleteMe'		" as-u-type, fuzzy-search code completion engine for Vim.
+	" Git:
+	"Plugin 'tpope/vim-git'						" Syntax higlihting and more for Vim <7.2
+	"Plugin 'tpope/vim-fugitive'				" run any git command (that generate ~no output) from inside Vim. DOIN
 	" Style:
 	Plugin 'altercation/vim-colors-solarized'
 	Plugin 'w0ng/vim-hybrid'					" dark colour scheme for Vim & gVim v7.3+
-	Plugin 'guns/xterm-color-table.vim' " See all 256 xterm colors right in Vim
+	Plugin 'guns/xterm-color-table.vim'			" See all 256 xterm colors right in Vim
 	" All of your Plugins must be added before the following line
-	call vundle#end()            " required
+	call vundle#end()							" required
 endif
-" }}}
+" }}}2
 
 " Use of the filetype plugins, auto completion and indentation support:
 " (must come after Plugins' setup)
@@ -156,7 +166,6 @@ endif
 set errorbells                  " errors trigger bell
 set lazyredraw					" no redraws in macros
 set confirm						" get a dialog when :q, :w, or :wq fails
-set nobackup					" no backup~ files, use undo
 set viminfo='20,\"500			" remember copy registers after quitting in the .viminfo file -- 20 jump links, regs up to 500 lines'
 set hidden					    " remember undo after quitting
 set history=500					" remember N lines of command history
@@ -172,6 +181,13 @@ if v:version >= 600
   set clipboard=unnamed         " interoperate with the X clipboard
   set splitright                " self-explanatory
 endif
+
+set complete=.,w,b,u,t,i,k				" Add dictionary to completion
+set completeopt+=preview				" Set autocompletion options
+set omnifunc=syntaxcomplete#Complete	" Enable Omnicompletion
+set secure								" Disable insecure local vimrc commands
+" get the dictionnaries: wget http://ftp.vim.org/vim/runtime/spell/fr.utf-8.{spl,sug} $VIMPATH/spell/
+set spelllang=en,fr						" English, French spellcheck for words
 
 " Code Editing									{{{2
 set path+=**                    " let :find do recursive searches
@@ -198,7 +214,7 @@ set wildignore=*.o,*~,*.pyc 	" Ignore compiled files
 set background=dark     " for dark terminals
 if &t_Co > 2 || has("gui_running")
 	if has("syntax")
-		syntax on						" enable colors
+		syntax on					" enable colors
 	endif
 	set hlsearch					" highlight search (very useful!)
 	nohlsearch						" but not initially
@@ -248,19 +264,40 @@ set ruler									" show cursor position in status bar
 set rulerformat=%15(%c%V\ %p%%%)
 
 " Other										{{{2
+set fo+=t						" Enables autowrap
 set nowrap							" dont wrap lines
 
 " Indents & Tabs				{{{2
 " ----------------
 set noexpandtab					"keep as tabs - not spaces | tabs rule, spaces drool! at least by default
-set tabstop=2						" 1 tab == N spaces
+set tabstop=2					" 1 tab == N spaces
 set softtabstop=4				" Make the <tab> key more useful while editing
-set smarttab						" smart tab handling for indenting
+set smarttab					" smart tab handling for indenting
 set autoindent					" indentation automatique avancée (! makes # comments no indent)
-set shiftround					" Round indent to multiple of 'shiftwidth'
+set shiftround					" Indents rounded to shiftwidths
+set copyindent					" Maintain current indent on next line
+set preserveindent				" Try not to mess with indentation
 set shiftwidth=2				" Number of spaces to use in auto(indent)
 if has('smartindent')
 	set smartindent				" autoindenting new lines, ain't smart enough eg stop indenting '#' comments
+endif
+set breakindent					" For soft wraps, indent newlines
+set nostartofline				" Stop gg/G etc. from moving to col0 DOIN
+
+" Linebreaks 						{{{2
+set lbr								" nice line breaking: on
+set tw=500							" 500 characters textwidth
+if has("linebreak")
+	"let &sbr = nr2char(8618).' '	" Show ↪ at the beginning of wrapped lines
+	set showbreak=↪					" (+linebreak)
+endif
+
+" Fonts							{{{2
+" ----------------
+if has("unix")
+	set guifont=Inconsolata\ 10
+else
+	set guifont=Consolas:h10
 endif
 
 " Folding 								{{{2
@@ -269,25 +306,9 @@ if has('folding')
 	set foldlevelstart=1    " initially close all folds
 	set foldenable
 	set foldtext=FoldText() " beautifull indents
-endif
-
-" Linebreaks 							{{{2
-set lbr								" nice line breaking: on
-set tw=500							" 500 characters textwidth
-if has("linebreak")
-	"let &sbr = nr2char(8618).' '  " Show ↪ at the beginning of wrapped lines
-	set showbreak=↪               " (+linebreak)
-endif
-" Changing characters to fill special ui elements
-set fillchars=vert:│,fold:─   " (+windows +folding)
-set list listchars=tab:\⋮\ ,extends:⟫,precedes:⟪,nbsp:.,trail:·
-
-" Fonts										{{{2
-" ----------------
-if has("unix")
-	set guifont=Inconsolata\ 10
-else
-	set guifont=Consolas:h10
+	" Save fold settings
+		au BufWinLeave *.* mkview!
+		au BufWinEnter *.* silent loadview
 endif
 
 " Lists										{{{2
@@ -312,33 +333,42 @@ nnoremap <C-y> 3<C-y>
 "  Ctrl-U and Ctrl-D = scroll half a page by default
 "  Ctrl-Y and Ctrl-E = scroll one line
 
-" Visual helpers ---------------------------{{{2
+" Visual helpers {{{2
 set number								" show line numbers (toggle with <L>tn)
 " My colour overrides
-" set the numbers' column color:
-highlight LineNr	term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
-"highlight LineNr	ctermfg=DarkGrey
-"hi SpecialKey      ctermfg=gray guifg=gray term=standout
-"hi MatchParen      cterm=bold ctermbg=255 gui=bold guibg=NONE guifg=lightblue
-"hi SpellBad        cterm=underline ctermfg=red ctermbg=NONE
-"hi SpellCap        cterm=underline ctermfg=blue ctermbg=NONE
-hi Comment			term=none ctermfg=darkgrey
-highlight DiffText	ctermbg=1			" avoid invisible color combination (red on red)
-set cursorline							" Useful to easily spot the cursor.  Will make screen redrawing slower.
+	" set the numbers' column color:
+	highlight LineNr	term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
+	"highlight LineNr	ctermfg=DarkGrey
+	"hi SpecialKey      ctermfg=gray guifg=gray term=standout
+	"hi MatchParen      cterm=bold ctermbg=255 gui=bold guibg=NONE guifg=lightblue
+	"hi SpellBad        cterm=underline ctermfg=red ctermbg=NONE
+	"hi SpellCap        cterm=underline ctermfg=blue ctermbg=NONE
+	hi Comment			term=none ctermfg=darkgrey
+	highlight DiffText	ctermbg=1			" avoid invisible color combination (red on red)
+	" Set ColorColum and ColorLine (Will make screen, and vim on big files redrawing slower)
+	" Highlight column 81 (Vim 7.3+ only):
+	if v:version >= 703
+		set cc=81
+		hi ColorColumn ctermbg=Gray ctermfg=Black guibg=#404040
+		"command Skinny set cc=73			" 'Command already set'
+		"command Wide set cc=80
+	endif
+	"set cursorline							" Useful to easily spot the cursor.
+	if has("autocmd")						" Only highlight the current line in the active window.
+		autocmd WinEnter * setlocal cursorline
+		autocmd WinLeave * setlocal nocursorline
+	endif
+	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=NONE
 set title								" show file in titlebar
 set wildmenu							" completion with menu
 set wildignore=*.o,*.obj,*.bak,*.exe,*.py[co],*.swp,*~,*.pyc,.svn
 set showmatch							" show matching bracket (briefly jump)
 set matchtime=2							" show matching bracket for 0.2 seconds
 set matchpairs+=<:>						" specially for html
-" Highlight column 81 (Vim 7.3+ only):
-if v:version >= 703
-	set cc=81
-	hi ColorColumn ctermbg=Gray ctermfg=Black guibg=#404040
-	"command Skinny set cc=73					" 'Command already set'
-	"command Wide set cc=80
-endif
-"}}}
+" Changing characters to fill special ui elements
+	set fillchars=vert:│,fold:─				" (+windows +folding)
+	set list listchars=tab:\⋮\ ,extends:⟫,precedes:⟪,nbsp:.,trail:•
+"}}}2
 "/Display }}}
 
 " Mappings {{{
@@ -393,9 +423,10 @@ map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
 " -------------------------
 map <leader>ts :setlocal spell!<cr>
 map <leader>se :setlocal spell spelllang=en<cr>
+map <leader>sf :setlocal spell spelllang=fr<cr>
 map <leader>sn ]s 		" next spelling
 map <leader>sp [s 		" prev spelling
-map <leader>sa zg 		" spelling good, add
+map <leader>sa zg 		" spelling good, add to dictionary
 map <leader>s? z= 		" spelling suggestions
 " good doc in 	https://wiki.archlinux.org/index.php/Vim#Spell_checking
 " ~ 	~ 	~ 	http://henry.precheur.org/vim/create_spell_file_for_vim
@@ -421,8 +452,10 @@ func! DeleteTrailingWS()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
+if has("autocmd")
+	autocmd BufWrite *.py :call DeleteTrailingWS()
+	autocmd BufWrite *.coffee :call DeleteTrailingWS()
+endif
 
 " Navigation {{{2
 
@@ -538,6 +571,7 @@ au filetype php         set omnifunc=phpcomplete#CompletePHP
 au filetype ruby        set omnifunc=rubycomplete#Complete
 au filetype sql         set omnifunc=sqlcomplete#Complete
 au filetype python      set omnifunc=pythoncomplete#Complete
+au FileType xml			setlocal omnifunc=xmlcomplete#CompleteTags
 
 	" CloseTag.vim  {{{3
 	if has("eval")
@@ -602,8 +636,12 @@ au filetype python      set omnifunc=pythoncomplete#Complete
 " SGI Plugins {{{2
 
 	if has("eval")
-	" Gundo
-		nmap <F5> :GundoToggle<CR>
+	" Gundo: DOIN
+		nmap <F7> :GundoToggle<CR>
+		"runtime! vimpath/bundle/gundo/plugin/gundo.vim
+		"if exists(':GundoToggle') == 2
+			"nmap <F5> :GundoToggle<CR>
+		"endif
 	" TagBar
 		nmap <F8> :TagbarToggle<CR>
 		
@@ -616,6 +654,10 @@ au filetype python      set omnifunc=pythoncomplete#Complete
 		map <leader>rcf :RivCreateFoot<CR>
 		map <leader>rce :RivCreateEmphasis<CR>
 		map <leader>rcs :RivCreateStrong<CR>
+	" InstantRst
+	" Inside a rst buffer:
+	"	:InstantRst[!]		Preview current buffer. Add ! to preview ALL rst buffer.
+	"	:StopInstantRst[!]	Stop Preview current buffer Add ! to stop preview ALL rst buffer. 
 
 	" ultisnips TODO: http://vimawesome.com/plugin/ultisnips-forever-and-always
 
