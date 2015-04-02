@@ -1,17 +1,5 @@
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
-vnoremap <buffer> <silent> [" :exe "normal! gv"|call search('\%(^\s*".*\n\)\%(^\s*"\)\@!', "bW")
-nnoremap <buffer> <silent> [" :call search('\%(^\s*".*\n\)\%(^\s*"\)\@!', "bW")
-vnoremap <buffer> <silent> [] m':exe "normal! gv"|call search('^\s*endf*\%[unction]\>', "bW")
-nnoremap <buffer> <silent> [] m':call search('^\s*endf*\%[unction]\>', "bW")
-vnoremap <buffer> <silent> [[ m':exe "normal! gv"|call search('^\s*fu\%[nction]\>', "bW")
-nnoremap <buffer> <silent> [[ m':call search('^\s*fu\%[nction]\>', "bW")
-vnoremap <buffer> <silent> ]" :exe "normal! gv"|call search('^\(\s*".*\n\)\@<!\(\s*"\)', "W")
-nnoremap <buffer> <silent> ]" :call search('^\(\s*".*\n\)\@<!\(\s*"\)', "W")
-vnoremap <buffer> <silent> ][ m':exe "normal! gv"|call search('^\s*endf*\%[unction]\>', "W")
-nnoremap <buffer> <silent> ][ m':call search('^\s*endf*\%[unction]\>', "W")
-vnoremap <buffer> <silent> ]] m':exe "normal! gv"|call search('^\s*fu\%[nction]\>', "W")
-nnoremap <buffer> <silent> ]] m':call search('^\s*fu\%[nction]\>', "W")
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -28,48 +16,48 @@ setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
 setlocal colorcolumn=81
-setlocal comments=sO:\"\ -,mO:\"\ \ ,eO:\"\",:\"
-setlocal commentstring=\"%s
+setlocal comments=:#
+setlocal commentstring=#\ %s
 setlocal complete=.,w,b,u,t,i,k
 setlocal concealcursor=
 setlocal conceallevel=0
 setlocal completefunc=
 setlocal copyindent
 setlocal cryptmethod=
-setlocal nocursorbind
-setlocal cursorcolumn
+setlocal cursorbind
+setlocal nocursorcolumn
 setlocal cursorline
 setlocal define=
 setlocal dictionary=
-setlocal nodiff
+setlocal diff
 setlocal equalprg=
 setlocal errorformat=
 setlocal noexpandtab
-if &filetype != 'vim'
-setlocal filetype=vim
+if &filetype != 'screen'
+setlocal filetype=screen
 endif
-setlocal foldcolumn=0
+setlocal foldcolumn=2
 setlocal foldenable
 setlocal foldexpr=0
 setlocal foldignore=#
 setlocal foldlevel=0
 setlocal foldmarker={{{,}}}
-setlocal foldmethod=marker
+setlocal foldmethod=diff
 setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=FoldText()
 setlocal formatexpr=
-setlocal formatoptions=croqlt
+setlocal formatoptions=croql
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=2
 setlocal imsearch=2
 setlocal include=
 setlocal includeexpr=
-setlocal indentexpr=GetVimIndent()
-setlocal indentkeys=0{,0},:,0#,!^F,o,O,e,=end,=else,=cat,=fina,=END,0\\
+setlocal indentexpr=
+setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
 setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255,#
+setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
 setlocal linebreak
 setlocal nolisp
@@ -91,23 +79,23 @@ setlocal noreadonly
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal shiftwidth=2
+setlocal scrollbind
+setlocal shiftwidth=4
 setlocal noshortname
 setlocal smartindent
 setlocal softtabstop=4
 setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=~/.vim/spell/en.utf-8.add
+setlocal spellfile=
 setlocal spelllang=en,fr
-setlocal statusline=
+setlocal statusline=%!airline#statusline(1)
 setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'vim'
-setlocal syntax=vim
+if &syntax != 'screen'
+setlocal syntax=screen
 endif
-setlocal tabstop=2
+setlocal tabstop=4
 setlocal tags=
 setlocal textwidth=500
 setlocal thesaurus=
@@ -117,24 +105,14 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal nowrap
 setlocal wrapmargin=0
-1
+89
 normal! zo
-24
-normal! zo
-65
-normal! zo
-501
-normal! zo
-501
-normal! zc
-622
-normal! zo
-let s:l = 97 - ((85 * winheight(0) + 36) / 73)
+let s:l = 58 - ((57 * winheight(0) + 36) / 73)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-97
-normal! 033|
+58
+normal! 0
 lcd ~/
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

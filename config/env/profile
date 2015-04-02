@@ -43,7 +43,7 @@ if [[ -d "$HOME/.ssh" ]]; then
         # if there is a running process with the given PID, then
             echo "fichier ssh-agent périmé trouvé. On génère un nouvel agent..."
             # "Stale agent file found. Spawning new agent..."
-            # DOIN: might need a $SSHKEY in case not a {id_rsa,id_dsa,id_ecdsa,identity}
+            # DOIN: Manually add $SSHKEY if not a {id_rsa,id_dsa,id_ecdsa,identity}
             eval `ssh-agent | tee $AGENT_ENV`
             ssh-add
 		fi
