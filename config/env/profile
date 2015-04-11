@@ -27,6 +27,7 @@ echo "GDMSESSION: $GDMSESSION" >>$LOG
 ## SSH {{{
 
 # Run ssh-add when needed and destroy the alias afterwards
+# in profile.local for better adaptability to local machine
 
 # 5) "GUI login" ⚡⚡⚡
 # Un seul ssh-agent pour login standard ou "GUI", se recréant à la demande.
@@ -35,7 +36,10 @@ echo "GDMSESSION: $GDMSESSION" >>$LOG
 # source: Administration Linux à 200% by Rob Flickenger.
 
 if [[ -d "$HOME/.ssh" ]]; then
-	AGENT_ENV="$HOME/.ssh/agent.env"
+    AGENT_ENV="$HOME/.ssh/agent.env"
+	if [[ -z $HOME/{id_rsa,id_dsa,id_ecdsa,identity} ]]; then
+        echo "Please manualy add custom $SSHKEY"
+    fi
 
 	if [[ -f "$AGENT_ENV" ]]; then
 		. $AGENT_ENV > /dev/null
@@ -43,7 +47,6 @@ if [[ -d "$HOME/.ssh" ]]; then
         # if there is a running process with the given PID, then
             echo "fichier ssh-agent périmé trouvé. On génère un nouvel agent..."
             # "Stale agent file found. Spawning new agent..."
-            # DOIN: Manually add $SSHKEY if not a {id_rsa,id_dsa,id_ecdsa,identity}
             eval `ssh-agent | tee $AGENT_ENV`
             ssh-add
 		fi

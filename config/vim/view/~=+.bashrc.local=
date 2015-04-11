@@ -42,7 +42,7 @@ setlocal foldexpr=0
 setlocal foldignore=#
 setlocal foldlevel=1
 setlocal foldmarker={{{,}}}
-setlocal foldmethod=marker
+setlocal foldmethod=manual
 setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=FoldText()
@@ -95,7 +95,7 @@ setlocal synmaxcol=3000
 if &syntax != 'sh'
 setlocal syntax=sh
 endif
-setlocal tabstop=4
+setlocal tabstop=2
 setlocal tags=
 setlocal textwidth=500
 setlocal thesaurus=
@@ -105,12 +105,13 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal nowrap
 setlocal wrapmargin=0
-let s:l = 112 - ((38 * winheight(0) + 38) / 76)
+silent! normal! zE
+let s:l = 8 - ((7 * winheight(0) + 38) / 76)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-112
-normal! 015|
+8
+normal! 0
 lcd ~/
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

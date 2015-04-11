@@ -14,7 +14,14 @@ startup_message off					# Turn welcome message off
 termcapinfo xterm* ti@:te@	        # scroll buffer of GNU Screen can also be accessed with C-a
 vbell off							# disable vbell (so wm urgency hints can work from within screen)
 
-# more in kozaki
+# shell:  Default process started in screen's windows.
+# Makes it possible to use a different shell inside screen
+# than is set as the default login shell.  Halleluja! :-)
+#shell                 -zsh
+shell                 bash
+# shell                 ksh
+
+# more in [4]
 #}}}
 
 # TERMs {{{
@@ -66,8 +73,12 @@ bind - command -c selectHighs	# bind hyphen to command-class selectHighs
 #}}}
 
 # Custom Statusbar {{{
+#
+# Prints the host name (left), window names highlightin the current window in yellow (center), date and time (right)
+#
 hardstatus off
 hardstatus alwayslastline
+#hardstatus string '%{= kw} %-Lw%{=b Kw} %n%f %t %{-}%+Lw %=%{= dd}'
 hardstatus string '%{= kW}[ %{m}%H %{W}][%= %{= kw}%?%-Lw%?%{r}(%{g}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{W}][%{Y} %d/%m %{Y}%c %{W}]'
 #hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W} %c %{g}]'
 # F8 to turn the status bar off
@@ -80,8 +91,29 @@ bindkey -k k12 hardstatus alwaysignore
 #}}}
 
 # keybindings {{{
+# SCREEN checks all the keys you type, looking for key known as "command character".
+# when u type it screen checks whether this key is bound to a command, and if so will run it.
 
-#remove some stupid / dangerous key bindings
+# the default bind commands if you need them:
+#
+# bind A title
+# bind C clear
+# bind D pow_detach
+# bind F fit
+# bind H log
+# bind I login on
+# bind K kill
+# bind L login
+# bind M monitor
+# bind N number
+# bind O login off
+# bind Q only
+# bind S split
+# bind W width
+# bind X remove
+# bind Z reset
+
+# Remove some stupid / dangerous key bindings
 #bind k
 #bind ^k
 #bind .
@@ -101,8 +133,21 @@ bindkey -k k12 hardstatus alwaysignore
 #register [ "\033:se noai\015a"
 #register ] "\033:se ai\015a"
 #bind ^] paste [.]
-# }}}
 
+# FAQ: So many keys are bound to some command already -
+# [4]	which keys are unbound yet? Which are free for binding?
+#		SCREEN does not have a command to show you
+#      Summary:  Here is a table of the keys which are not bound by default:
+#		unbound:  -B--E-G--J-L---P-R-TUV--Y-
+#		  bound:  A-CD-F-HI-K-MNO-Q-S---WX-Z
+
+# Bind some programs, services
+# I have bound the unbound uppercase letters to start programs in 
+# windows directly, ie without starting a new window with a shell within first.
+# This simply saves shells and thus, RAM -
+bind ^r screen -t 'ranger' ranger
+bind ^s screen -t 'DDG' links www.duckduckgo.com
+# }}}
 
 # Autostart some windows and programs {{{
 #screen -t htop 0 htop
@@ -125,7 +170,7 @@ select 1
 # [1] wiki.archlinux.org
 # [2] https://github.com/coderholic/config/blob/master/.screenrc
 # https://bbs.archlinux.org/viewtopic.php?pid=963060
-# dotphiles : https://github.com/dotphiles/dotphiles
+# [4] dotphiles : https://github.com/dotphiles/dotphiles
 # }}}
 
-# vim:foldmethod=marker:sw=4:ts=4
+# vim:fdm=marker:sw=4:ts=4
