@@ -117,7 +117,6 @@ alias less="less -X"            # prevent less from clearing the screen upon exi
 alias sudo="sudo "				# Carry over aliases to the root account when using sudo
 alias cp="cp -i"                # to prevent is safer than to cure
 alias mv="mv -i"
-# Colors and  TERM: see 'colorfull PS1' below
 
 export VARIABLES="1"
 
@@ -165,65 +164,80 @@ if [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] ; then
         fi
 	fi
 
-	# Color Pompt {{{3
+	# Color Prompt {{{3
+
+    # check
+    #PS1="My prompt (full colors) >"
 
     # Use Bashline if exists
     #if [[ -d "~/.dotfiles/bash/bashline" ]]; then
     #  . ~/.dotfiles/bash/bashline/bashline.sh
     #else
-      #PS1="My prompt (full colors) >"
 
-      # Kiss
-      #PS1="[\u@\h:\w]\$ "
+    # Show if SSH; otherwise use user's choice, otherwise system-wide conf's if exists
+    if [[ -n "$SSH_CLIENT" ]]; then
+      echo "Is a remote connection"
+      PS1='\[\e[0;33m\]\u@\h:\wSSH$\[\e[m\] '
+    elif [[ -f $XDG_HOME_CONF/bash/prompt ]]; then
+      echo "$XDG_HOME_CONF/bash/prompt exists, using it."
+      source $XDG_HOME_CONF/bash/prompt
+    elif [[ -f ~/.bash_prompt ]]; then
+      source ~/.bash_prompt
+    #elif [[ -f /etc/bashrc ]]; then
+      #return
+    else
 
-	  # Standard:
-      #PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\$\[\033[00m\] "
+    # Kiss
+    #PS1="[\u@\h:\w]\$ "
 
-      # Use this PS1 string if you want \W for root and \w for all other users:
-      #PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h\[\033[01;34m\] \W'; else echo '\[\033[01;32m\]\u@\h\[\033[01;34m\] \w'; fi) \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\$\[\033[00m\] "
+	# Standard:
+    #PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\$\[\033[00m\] "
 
-      # with numerical error (number)   https://wiki.archlinux.org/index.php/Color_Bash_Prompt_(简体中文)
-      #PS1="\n\[\033[1;37m\]\342\224\214($( \
+    # PS1 string with \W for root and \w for all other users:
+    #PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h\[\033[01;34m\] \W'; else echo '\[\033[01;32m\]\u@\h\[\033[01;34m\] \w'; fi) \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\$\[\033[00m\] "
+
+    # with numerical error (number)   https://wiki.archlinux.org/index.php/Color_Bash_Prompt_(简体中文)
+    #PS1="\n\[\033[1;37m\]\342\224\214($( \
 #if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;34m\]\u@\h'; fi \
 #)\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\$?\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\@ \d\[\033[1;37m\])\[\033[1;37m\]\n\342\224\224\342\224\200(\[\033[1;32m\]\w\[\033[1;37m\])\342\224\200(\[\033[1;32m\]\$(ls -1 | wc -l | sed 's: ::g') files, \$(ls -lah | grep -m 1 total | sed 's/total //')b\[\033[1;37m\])\342\224\200> \[\033[0m\]"
 
-      # with Unicode variation with success and error symbols  https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
-      # (!) causes error on web4all
-      #PS1="\[\033[0;37m\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && echo \"[\[\033[0;31m\]\342\234\227\[\033[0;37m\]]\342\224\200\")[$(if [[ ${EUID} == 0 ]]; then echo '\[\033[0;31m\]\h'; else echo '\[\033[0;33m\]\u\[\033[0;37m\]@\[\033[0;96m\]\h'; fi)\[\033[0;2 37m\]]\342\224\200[\[\033[0;32m\]\w\[\033[0;37m\]]\n\[\033[0;37m\]\342\224\224\342\224\200\342\224\200\342\225\274 \[\033[0m\]"
+    # Unicode variation with success and error symbols  https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
+    # (!) causes error on web4all
+    #PS1="\[\033[0;37m\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && echo \"[\[\033[0;31m\]\342\234\227\[\033[0;37m\]]\342\224\200\")[$(if [[ ${EUID} == 0 ]]; then echo '\[\033[0;31m\]\h'; else echo '\[\033[0;33m\]\u\[\033[0;37m\]@\[\033[0;96m\]\h'; fi)\[\033[0;2 37m\]]\342\224\200[\[\033[0;32m\]\w\[\033[0;37m\]]\n\[\033[0;37m\]\342\224\224\342\224\200\342\224\200\342\225\274 \[\033[0m\]"
 
-      # Show the git branch in your bash prompt
-      # '__git_ps1' is an empty string if you’re not in a git directory
-      PS1="\n\[\033[1;37m\]\342\224\214($( \
+    # Numerical error (number) + shows the git branch in bash prompt
+    # '__git_ps1' is an empty string if you’re not in a git directory
+    PS1="\n\[\033[1;37m\]\342\224\214($( \
 if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;34m\]\u@\h'; fi \
 )\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\$?\[\033[1;37m\])\342\224\200(\[\033[1;34m\]\@ \d\[\033[1;37m\])\[\033[1;37m\]\n\342\224\224\342\224\200(\[\033[1;32m\]\w\[\033[1;37m\])\342\224\200$(__git_ps1) \
 (\[\033[1;32m\]\$(ls -1 | wc -l | sed 's: ::g') files, \$(ls -lah | grep -m 1 total | sed 's/total //')b\[\033[1;37m\])\342\224\200> \[\033[0m\]"
-    #fi
+    fi
 
 	# color dependant stuff here {{{3
     # Sorties en couleurs pour ls & grep si le terminal le supporte (urxvt, xterm, and aterm) :
     #if [ "$TERM" != "dumb" ]; then
-        alias dir="dir --color=auto"
-        alias grep='grep --color'
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            # Use GNU ls on OSX
-            alias ls='LC_COLLATE=C gls --color=auto --group-directories-first'
-        else
-            alias ls='LC_COLLATE=C ls -h -p --color=auto --group-directories-first'
-        fi
-        alias lsl='ls -GF'                              # (-G, --no-group) add signs to show directories and else :)
-        alias la='ls -a'
-        alias ll='ls -l -G -h -p'
-        alias lh='ll -h'
-        alias lsa='ls --all --classify'
-        alias lssh='ls -Ssh --color=always --classify'  # classement par taille croissant
-        alias lsd="ls -alF | grep /$"                   # Show clearly only directories
-        export LESS_TERMCAP_mb=$(printf "\e[1;31m")     # DOIN: shell agnostic setup
-        export LESS_TERMCAP_md=$(printf "\e[1;31m")
-        export LESS_TERMCAP_me=$(printf "\e[0m")
-        export LESS_TERMCAP_se=$(printf "\e[0m")
-        export LESS_TERMCAP_so=$(printf "\e[1;44;33m")
-        export LESS_TERMCAP_ue=$(printf "\e[0m")
-        export LESS_TERMCAP_us=$(printf "\e[1;32m")
+    alias dir="dir --color=auto"
+    alias grep='grep --color'
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # Use GNU ls on OSX
+        alias ls='LC_COLLATE=C gls --color=auto --group-directories-first'
+    else
+        alias ls='LC_COLLATE=C ls -h -p --color=auto --group-directories-first'
+    fi
+    alias lsl='ls -GF'                              # (-G, --no-group) add signs to show directories and else :)
+    alias la='ls -a'
+    alias ll='ls -l -G -h -p'
+    alias lh='ll -h'
+    alias lsa='ls --all --classify'
+    alias lssh='ls -Ssh --color=always --classify'  # classement par taille croissant
+    alias lsd="ls -alF | grep /$"                   # Show clearly only directories
+    export LESS_TERMCAP_mb=$(printf "\e[1;31m")     # DOIN: shell agnostic setup
+    export LESS_TERMCAP_md=$(printf "\e[1;31m")
+    export LESS_TERMCAP_me=$(printf "\e[0m")
+    export LESS_TERMCAP_se=$(printf "\e[0m")
+    export LESS_TERMCAP_so=$(printf "\e[1;44;33m")
+    export LESS_TERMCAP_ue=$(printf "\e[0m")
+    export LESS_TERMCAP_us=$(printf "\e[1;32m")
     #fi
 
 else

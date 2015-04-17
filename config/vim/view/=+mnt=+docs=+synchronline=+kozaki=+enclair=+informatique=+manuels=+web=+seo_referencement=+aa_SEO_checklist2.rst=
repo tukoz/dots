@@ -1,0 +1,296 @@
+let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
+argglobal
+let s:cpo_save=&cpo
+set cpo&vim
+inoremap <buffer> <silent> <M-kEnter> :call riv#action#ins_m_enter()
+inoremap <buffer> <silent> <C-S-kEnter> :call riv#action#ins_m_enter()
+inoremap <buffer> <silent> <C-S-CR> :call riv#action#ins_m_enter()
+inoremap <buffer> <silent> <S-kEnter> :call riv#action#ins_s_enter()
+inoremap <buffer> <silent> <S-CR> :call riv#action#ins_s_enter()
+inoremap <buffer> <silent> <C-kEnter> :call riv#action#ins_c_enter()
+inoremap <buffer> <silent> <C-CR> :call riv#action#ins_c_enter()
+inoremap <buffer> <silent> <kEnter> :call riv#action#ins_enter()
+inoremap <buffer> <silent> <expr> <S-Tab> riv#action#ins_stab()
+inoremap <buffer> <silent> <expr> <BS> riv#action#ins_backspace()
+nmap <buffer> <silent> ck <Plug>(RivCreateLink)
+map <buffer> <silent> hs <Plug>(RivHelpSection)
+nmap <buffer> <silent> mh <Plug>(RivSuperMEnter)
+nmap <buffer> <silent> mk <Plug>(RivSuperSEnter)
+nmap <buffer> <silent> mj <Plug>(RivSuperCEnter)
+nmap <buffer> <silent> mm <Plug>(RivSuperEnter)
+map <buffer> <silent> t3 <Plug>(RivTestObj)
+map <buffer> <silent> t4 <Plug>(RivTestTest)
+map <buffer> <silent> t2 <Plug>(RivTestFold1)
+map <buffer> <silent> t1 <Plug>(RivTestFold0)
+map <buffer> <silent> t` <Plug>(RivReload)
+map <buffer> <silent> 2b <Plug>(Riv2BuildPath)
+map <buffer> <silent> 2ll <Plug>(Riv2Latex)
+map <buffer> <silent> 2xx <Plug>(Riv2Xml)
+map <buffer> <silent> 2pp <Plug>(Riv2Pdf)
+map <buffer> <silent> 2ss <Plug>(Riv2S5)
+map <buffer> <silent> 2oo <Plug>(Riv2Odt)
+map <buffer> <silent> 2hp <Plug>(Riv2HtmlProject)
+map <buffer> <silent> 2hh <Plug>(Riv2HtmlAndBrowse)
+map <buffer> <silent> 2hf <Plug>(Riv2HtmlFile)
+map <buffer> <silent> df <Plug>(RivDeleteFile)
+nmap <buffer> <silent> cm <Plug>(RivCreateExplicitMark)
+nmap <buffer> <silent> cr <Plug>(RivCreateTransition)
+nmap <buffer> <silent> ch <Plug>(RivCreateHyperLink)
+nmap <buffer> <silent> cb <Plug>(RivCreateLiteralBlock)
+vnoremap <buffer> <silent> cl :call riv#create#wrap_inline("``","v")
+nmap <buffer> <silent> cl <Plug>(RivCreateLiteralInline)
+vnoremap <buffer> <silent> ci :call riv#create#wrap_inline("`","v")
+nmap <buffer> <silent> ci <Plug>(RivCreateInterpreted)
+vnoremap <buffer> <silent> cs :call riv#create#wrap_inline("**","v")
+nmap <buffer> <silent> cs <Plug>(RivCreateStrong)
+vnoremap <buffer> <silent> ce :call riv#create#wrap_inline("*","v")
+nmap <buffer> <silent> ce <Plug>(RivCreateEmphasis)
+map <buffer> <silent> cc <Plug>(RivCreateContent)
+map <buffer> <silent> cdt <Plug>(RivCreateTime)
+map <buffer> <silent> cdd <Plug>(RivCreateDate)
+map <buffer> <silent> cf <Plug>(RivCreateFoot)
+map <buffer> <silent> cg <Plug>(RivCreateGitLink)
+vnoremap <buffer> <silent> ck :call riv#create#link(mode().visualmode())
+omap <buffer> <silent> ck <Plug>(RivCreateLink)
+map <buffer> <silent> uc <Plug>(RivTodoUpdateCache)
+map <buffer> <silent> e4 <Plug>(RivTodoType4)
+map <buffer> <silent> e3 <Plug>(RivTodoType3)
+map <buffer> <silent> e2 <Plug>(RivTodoType2)
+map <buffer> <silent> e1 <Plug>(RivTodoType1)
+map <buffer> <silent> e` <Plug>(RivTodoAsk)
+map <buffer> <silent> ep <Plug>(RivTodoPrior)
+map <buffer> <silent> ed <Plug>(RivTodoDate)
+map <buffer> <silent> ex <Plug>(RivTodoDel)
+map <buffer> <silent> ee <Plug>(RivTodoToggle)
+map <buffer> <silent> l5 <Plug>(RivListType4)
+map <buffer> <silent> l4 <Plug>(RivListType3)
+map <buffer> <silent> l3 <Plug>(RivListType2)
+map <buffer> <silent> l2 <Plug>(RivListType1)
+map <buffer> <silent> l1 <Plug>(RivListType0)
+map <buffer> <silent> lx <Plug>(RivListDelete)
+map <buffer> <silent> l` <Plug>(RivListToggle)
+map <buffer> <silent> lp <Plug>(RivListSup)
+map <buffer> <silent> lb <Plug>(RivListSub)
+map <buffer> <silent> ln <Plug>(RivListNew)
+map <buffer> <silent> tp <Plug>(RivTablePrevCell)
+map <buffer> <silent> tn <Plug>(RivTableNextCell)
+map <buffer> <silent> tf <Plug>(RivTableFormat)
+map <buffer> <silent> tc <Plug>(RivTableCreate)
+map <buffer> <silent> s0 <Plug>(RivTitle0)
+map <buffer> <silent> s6 <Plug>(RivTitle6)
+map <buffer> <silent> s5 <Plug>(RivTitle5)
+map <buffer> <silent> s4 <Plug>(RivTitle4)
+map <buffer> <silent> s3 <Plug>(RivTitle3)
+map <buffer> <silent> s2 <Plug>(RivTitle2)
+map <buffer> <silent> s1 <Plug>(RivTitle1)
+vnoremap <buffer> <silent> = =
+nnoremap <buffer> <silent> = ==
+vnoremap <buffer> <silent> < <
+nnoremap <buffer> <silent> < <<
+vnoremap <buffer> <silent> > >
+nnoremap <buffer> <silent> > >>
+vnoremap <buffer> <silent> l= :call riv#list#shift("=")
+nmap <buffer> <silent> l= <Plug>(RivShiftEqual)
+vnoremap <buffer> <silent> l< :call riv#list#shift("-")
+nmap <buffer> <silent> l< <Plug>(RivShiftLeft)
+vnoremap <buffer> <silent> l> :call riv#list#shift("+")
+nmap <buffer> <silent> l> <Plug>(RivShiftRight)
+nmap <buffer> <silent> kp <Plug>(RivLinkPrev)
+nmap <buffer> <silent> kn <Plug>(RivLinkNext)
+nmap <buffer> <silent> ks <Plug>(RivLinkShow)
+nmap <buffer> <silent> ko <Plug>(RivLinkOpen)
+vnoremap <buffer> <silent>  u zx
+nnoremap <buffer> <silent>  u zx
+vnoremap <buffer> <silent>  a @=(foldclosed(".")>0?"zR":"zM")
+nnoremap <buffer> <silent>  a @=(foldclosed(".")>0?"zR":"zM")
+vnoremap <buffer> <silent>    @=(foldclosed(".")>0?"zv":"zc")
+nnoremap <buffer> <silent>    @=(foldclosed(".")>0?"zv":"zc")
+nmap <buffer> <silent> 	 <Plug>(RivLinkNext)
+map <buffer> <silent>  <Plug>(RivItemToggle)
+vnoremap <buffer> <silent> < :call riv#list#shift("-")
+nmap <buffer> <silent> < <Plug>(RivShiftLeft)
+vnoremap <buffer> <silent> = :call riv#list#shift("=")
+nmap <buffer> <silent> = <Plug>(RivShiftEqual)
+vnoremap <buffer> <silent> > :call riv#list#shift("+")
+nmap <buffer> <silent> > <Plug>(RivShiftRight)
+inoremap <buffer> <silent>  :call riv#action#ins_m_enter()
+map <buffer> <silent> <kEnter> <Plug>(RivItemToggle)
+map <buffer> <silent> <2-LeftMouse> <Plug>(RivItemClick)
+vnoremap <buffer> <silent> <S-ScrollWheelUp> <
+nnoremap <buffer> <silent> <S-ScrollWheelUp> <<
+vnoremap <buffer> <silent> <S-ScrollWheelDown> >
+nnoremap <buffer> <silent> <S-ScrollWheelDown> >>
+vnoremap <buffer> <silent> <C-ScrollWheelUp> :call riv#list#shift("-")
+nmap <buffer> <silent> <C-ScrollWheelUp> <Plug>(RivShiftLeft)
+vnoremap <buffer> <silent> <C-ScrollWheelDown> :call riv#list#shift("+")
+nmap <buffer> <silent> <C-ScrollWheelDown> <Plug>(RivShiftRight)
+nmap <buffer> <silent> <S-Tab> <Plug>(RivLinkPrev)
+imap <buffer> <silent> mh <Plug>(RivSuperMEnter)
+imap <buffer> <silent> mk <Plug>(RivSuperSEnter)
+imap <buffer> <silent> mj <Plug>(RivSuperCEnter)
+imap <buffer> <silent> mm <Plug>(RivSuperEnter)
+inoremap <buffer> <silent> <expr> mw riv#action#ins_stab()
+inoremap <buffer> <silent> <expr> me riv#action#ins_tab()
+inoremap <buffer> <silent> <expr> mq riv#action#ins_backspace()
+imap <buffer> <silent> cm <Plug>(RivCreateExplicitMark)
+imap <buffer> <silent> cr <Plug>(RivCreateTransition)
+imap <buffer> <silent> ch <Plug>(RivCreateHyperLink)
+imap <buffer> <silent> cb <Plug>(RivCreateLiteralBlock)
+inoremap <buffer> <silent> cl :call riv#create#wrap_inline("``","i")
+inoremap <buffer> <silent> ci :call riv#create#wrap_inline("`","i")
+inoremap <buffer> <silent> cs :call riv#create#wrap_inline("**","i")
+inoremap <buffer> <silent> ce :call riv#create#wrap_inline("*","i")
+imap <buffer> <silent> cdt <Plug>(RivCreateTime)
+imap <buffer> <silent> cdd <Plug>(RivCreateDate)
+imap <buffer> <silent> cf <Plug>(RivCreateFoot)
+imap <buffer> <silent> cg <Plug>(RivCreateGitLink)
+imap <buffer> <silent> ck <Plug>(RivCreateLink)
+imap <buffer> <silent> e4 <Plug>(RivTodoType4)
+imap <buffer> <silent> e3 <Plug>(RivTodoType3)
+imap <buffer> <silent> e2 <Plug>(RivTodoType2)
+imap <buffer> <silent> e1 <Plug>(RivTodoType1)
+imap <buffer> <silent> e` <Plug>(RivTodoAsk)
+imap <buffer> <silent> ep <Plug>(RivTodoPrior)
+imap <buffer> <silent> ed <Plug>(RivTodoDate)
+imap <buffer> <silent> ex <Plug>(RivTodoDel)
+imap <buffer> <silent> ee <Plug>(RivTodoToggle)
+imap <buffer> <silent> l5 <Plug>(RivListType4)
+imap <buffer> <silent> l4 <Plug>(RivListType3)
+imap <buffer> <silent> l3 <Plug>(RivListType2)
+imap <buffer> <silent> l2 <Plug>(RivListType1)
+imap <buffer> <silent> l1 <Plug>(RivListType0)
+imap <buffer> <silent> lx <Plug>(RivListDelete)
+imap <buffer> <silent> l` <Plug>(RivListToggle)
+imap <buffer> <silent> lp <Plug>(RivListSup)
+imap <buffer> <silent> lb <Plug>(RivListSub)
+imap <buffer> <silent> ln <Plug>(RivListNew)
+imap <buffer> <silent> tp <Plug>(RivTablePrevCell)
+imap <buffer> <silent> tn <Plug>(RivTableNextCell)
+imap <buffer> <silent> tf <Plug>(RivTableFormat)
+imap <buffer> <silent> tc <Plug>(RivTableCreate)
+imap <buffer> <silent> s0 <Plug>(RivTitle0)
+imap <buffer> <silent> s6 <Plug>(RivTitle6)
+imap <buffer> <silent> s5 <Plug>(RivTitle5)
+imap <buffer> <silent> s4 <Plug>(RivTitle4)
+imap <buffer> <silent> s3 <Plug>(RivTitle3)
+imap <buffer> <silent> s2 <Plug>(RivTitle2)
+imap <buffer> <silent> s1 <Plug>(RivTitle1)
+inoremap <buffer> <silent> <expr> 	 riv#action#ins_tab()
+inoremap <buffer> <silent>  :call riv#action#ins_enter()
+let &cpo=s:cpo_save
+unlet s:cpo_save
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal breakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=81
+setlocal comments=fb:..
+setlocal commentstring=..\ %s
+setlocal complete=.,w,b,u,t,i,k
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal completefunc=
+setlocal copyindent
+setlocal cryptmethod=
+setlocal cursorbind
+setlocal nocursorcolumn
+setlocal cursorline
+setlocal define=
+setlocal dictionary=
+setlocal diff
+setlocal equalprg=
+setlocal errorformat=
+setlocal expandtab
+if &filetype != 'rst'
+setlocal filetype=rst
+endif
+setlocal foldcolumn=2
+setlocal foldenable
+setlocal foldexpr=riv#fold#expr(v:lnum)
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=diff
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=riv#fold#text()
+setlocal formatexpr=
+setlocal formatoptions=tcroql
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal grepprg=
+setlocal iminsert=2
+setlocal imsearch=2
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=riv#insert#indent(v:lnum)
+setlocal indentkeys=!^F,o,O
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255,.
+setlocal keywordprg=
+setlocal linebreak
+setlocal nolisp
+setlocal lispwords=
+setlocal list
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:],<:>
+setlocal modeline
+setlocal modifiable
+setlocal nrformats=octal,hex
+setlocal nonumber
+setlocal numberwidth=4
+setlocal omnifunc=syntaxcomplete#Complete
+setlocal path=
+setlocal preserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+setlocal norelativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal scrollbind
+setlocal shiftwidth=2
+setlocal noshortname
+setlocal nosmartindent
+setlocal softtabstop=4
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en,fr
+setlocal statusline=%!airline#statusline(1)
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'rst'
+setlocal syntax=rst
+endif
+setlocal tabstop=2
+setlocal tags=
+setlocal textwidth=500
+setlocal thesaurus=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal nowrap
+setlocal wrapmargin=0
+let s:l = 186 - ((185 * winheight(0) + 34) / 69)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+186
+normal! 0
+lcd /mnt/docs/synchronline/kozaki/enclair/informatique/manuels/web/seo_referencement
+let &so = s:so_save | let &siso = s:siso_save
+doautoall SessionLoadPost
+" vim: set ft=vim :

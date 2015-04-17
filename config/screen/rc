@@ -53,6 +53,9 @@ termcapinfo xterm-color "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
 termcapinfo xterm-256color "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
 # erase background with current bg color
 defbce "on"
+
+# Prevent shell from treating screen as a dumb term:
+# shell -$SHELL
 #}}}2
 
 # set terminal name
@@ -91,6 +94,7 @@ bindkey -k k12 hardstatus alwaysignore
 #}}}
 
 # keybindings {{{
+# (!) beware for interference with other programs.
 # SCREEN checks all the keys you type, looking for key known as "command character".
 # when u type it screen checks whether this key is bound to a command, and if so will run it.
 
@@ -114,18 +118,18 @@ bindkey -k k12 hardstatus alwaysignore
 # bind Z reset
 
 # Remove some stupid / dangerous key bindings
-#bind k
-#bind ^k
+bind k
+bind ^k
 #bind .
 #bind ^\
 #bind \\
 #bind ^h
 #bind h
 #make them better
-#bind 'K' kill
-#bind 'I' login on
-#bind 'O' login off
-#bind '}' history
+bind 'K' kill
+bind 'I' login on
+bind 'O' login off
+bind '}' history
 
 # Yet another hack:
 # Prepend/append register [/] to the paste if ^a^] is pressed.
@@ -146,6 +150,7 @@ bindkey -k k12 hardstatus alwaysignore
 # windows directly, ie without starting a new window with a shell within first.
 # This simply saves shells and thus, RAM -
 bind ^r screen -t 'ranger' ranger
+bind ^l screen -t 'live logs' journalctl -f
 bind ^s screen -t 'DDG' links www.duckduckgo.com
 # }}}
 

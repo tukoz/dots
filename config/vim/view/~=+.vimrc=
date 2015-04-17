@@ -92,7 +92,7 @@ setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
 setlocal noscrollbind
-setlocal shiftwidth=2
+setlocal shiftwidth=4
 setlocal noshortname
 setlocal smartindent
 setlocal softtabstop=4
@@ -100,14 +100,14 @@ setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=~/.vim/spell/en.utf-8.add
 setlocal spelllang=en,fr
-setlocal statusline=
+setlocal statusline=%!airline#statusline(1)
 setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
 if &syntax != 'vim'
 setlocal syntax=vim
 endif
-setlocal tabstop=2
+setlocal tabstop=4
 setlocal tags=
 setlocal textwidth=500
 setlocal thesaurus=
@@ -125,16 +125,16 @@ normal! zo
 normal! zo
 501
 normal! zo
-501
-normal! zc
+585
+normal! zo
 622
 normal! zo
-let s:l = 96 - ((84 * winheight(0) + 36) / 73)
+let s:l = 595 - ((549 * winheight(0) + 37) / 75)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-96
-normal! 036|
+595
+normal! 05|
 lcd ~/
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

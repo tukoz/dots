@@ -95,7 +95,7 @@ setlocal synmaxcol=3000
 if &syntax != 'sh'
 setlocal syntax=sh
 endif
-setlocal tabstop=4
+setlocal tabstop=2
 setlocal tags=
 setlocal textwidth=500
 setlocal thesaurus=
@@ -105,27 +105,18 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal nowrap
 setlocal wrapmargin=0
-125
+3
 normal! zo
-128
+3
 normal! zo
-138
+40
 normal! zo
-167
-normal! zo
-216
-normal! zo
-let s:l = 213 - ((64 * winheight(0) + 37) / 74)
+let s:l = 40 - ((39 * winheight(0) + 37) / 75)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-213
-let s:c = 145 - ((43 * winwidth(0) + 45) / 90)
-if s:c > 0
-  exe 'normal! ' . s:c . '|zs' . 145 . '|'
-else
-  normal! 0145|
-endif
+40
+normal! 0
 lcd ~/
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
